@@ -1,195 +1,103 @@
 # VeriLens — Cryptographic Photo Authenticity Framework
 
-VeriLens is a modular framework for proving the authenticity of real photos at the moment of capture.  
-It provides a secure pipeline that verifies a photo was taken by a real device, at a real time and place, and was not generated or manipulated by AI.
+VeriLens is a modular framework for proving that a photo was captured by a real device, at a specific time and place, without AI manipulation. The system combines secure capture, metadata preservation, cryptographic hashing, verification heuristics, and blockchain anchoring to produce public authenticity certificates.
 
-This repository contains three main components:
+## Components
+- MVP application: capture, metadata extraction, hashing, blockchain signing.
+- Verification engine: depth analysis, EXIF validation, tamper detection.
+- SDK foundation: reusable interfaces, core modules, adapters, utilities, and examples.
 
-•⁠  ⁠*MVP Application* — image capture, metadata extraction, hashing, blockchain signing.
-•⁠  ⁠*Verification Engine* — depth analysis, EXIF validation, tamper detection.
-•⁠  ⁠*SDK Foundation* — interfaces, core modules, adapters, utilities, and examples.
+## Key Capabilities
+- Secure device-side capture and EXIF extraction.
+- Metadata integrity checks, depth-based realism signals, and GPS plausibility rules.
+- SHA-256 hashing across the image bitmap plus metadata bundle.
+- Blockchain signing for non-repudiable proof-of-existence.
+- Authenticity certificates delivered as JSON, QR payloads, and future PDF exports.
 
----
+## Repository Structure
 
-## 🚀 Vision
+### Application (`app/`)
+- `api/`: request pipeline and http client helpers.
+- `blockchain/`: signing clients and retry queue.
+- `crypto/`: symmetric encryption and hashing utilities.
+- `mobile/`: capture handler primitives for native shells.
+- `shared/`: common errors, logging, and secret helpers.
+- `verification/`: metadata + depth analyzers and orchestration pipeline.
 
-As AI-generated images continue to explode in quality, the world needs a reliable method to distinguish real photos from synthetic content.  
-VeriLens aims to become a universal standard for *cryptographic image authenticity*, combining:
+### SDK (`sdk/`)
+- `core/`: baseline implementations of capture, crypto, metadata, and verification services.
+- `interfaces/`: contracts for blockchain signer, hash service, verification pipeline, etc.
+- `adapters/`: environment-specific adapters (blockchain, capture, metadata).
+- `utils/`: config loader, logger, validators, and error normalization.
+- `examples/`: Quickstart guide and runnable sample usage.
+- `types/`: shared TypeScript declarations.
+- `ROADMAP.md`: living roadmap for SDK deliverables.
 
-✔ Secure on-device capture  
-✔ Metadata integrity  
-✔ Depth/real-world signal verification  
-✔ Blockchain-backed signing  
-✔ Public authenticity certificates  
+### Documentation & Supporting Assets
+- `architecture/`: diagrams (system, data flow, sequence) and architecture write-up.
+- `docs/`: MVP overview, security considerations, verification pipeline deep dive.
+- `config/`: environment presets (`default.json`, `development.json`, `secrets.example.json`).
+- `tests/`: Jest-based unit tests for hashing, SDK utilities, and verification engine logic.
 
----
+## Getting Started
 
-## 🧩 Project Structure
+### Prerequisites
+- Node.js 18+ (TS features rely on modern tooling).
+- npm or yarn.
+- Access to blockchain credentials if you plan to anchor proofs locally.
 
-/app/ /mobile/               # Mobile app code (React Native / Swift / Kotlin) /api/                  # REST API (capture → verify → sign → return certificate) /verification/         # Depth & metadata verification pipeline /crypto/               # Hashing + signature generation /blockchain/           # Blockchain signing microservice /shared/               # Shared models, constants, helpers
-
-/sdk/ /core/                 # Core skeleton implementations /interfaces/           # SDK interfaces (IImageCapture, IHashing, etc.) /adapters/             # Future platform adapters /utils/                # Logging, validation, error normalization /types/                # Shared TS types /examples/             # Sample usage + Quickstart guide ROADMAP.md
-
-/architecture/ architecture.md system_diagram.md sequence_diagrams.md data_flow.md
-
-/docs/ mvp_overview.md verification_pipeline.md security_considerations.md
-
-/tests/ ...jest/pytest tests...
-
-/config/ env.example config.template.json
-
----
-
-## 🛠 Core Features
-
-### 🖼 1. Secure Image Capture
-•⁠  ⁠On-device EXIF extraction  
-•⁠  ⁠Sensor metadata (timestamp, device ID, GPS)  
-•⁠  ⁠Local encryption before upload  
-•⁠  ⁠Anti-spoofing protections  
-
-### 🔐 2. Cryptographic Hashing
-•⁠  ⁠SHA-256 hashing of:
-  - image bitmap  
-  - metadata bundle  
-•⁠  ⁠Produces a tamper-proof fingerprint
-
-### 🧬 3. Verification Engine
-Checks authenticity signals:
-•⁠  ⁠EXIF consistency  
-•⁠  ⁠Depth estimation / real-scene cues  
-•⁠  ⁠GPS plausibility  
-•⁠  ⁠Device signature integrity  
-•⁠  ⁠Environment validation
-
-### ⛓ 4. Blockchain Signing
-•⁠  ⁠Lightweight signing microservice  
-•⁠  ⁠Proof-of-existence via hash anchoring  
-•⁠  ⁠Public verification endpoint  
-
-### 📄 5. Authenticity Certificate
-Returned as:
-•⁠  ⁠JSON object  
-•⁠  ⁠QR code  
-•⁠  ⁠Future: signed PDF  
-
----
-
-## 📦 Installing & Running (MVP)
-
-### 1. Install dependencies
+### Install dependencies
 ```bash
 npm install
 # or
 yarn install
+```
 
-2.⁠ ⁠Environment setup
+### Configure environment
+Copy `config/secrets.example.json` or load values via environment variables (e.g. `.env`) and supply:
+- `BLOCKCHAIN_RPC_URL`
+- `BLOCKCHAIN_PRIVATE_KEY`
+- `API_BASE_URL`
+- `ENCRYPTION_KEY`
 
-Create .env based on /config/env.example:
-
-BLOCKCHAIN_RPC_URL=
-BLOCKCHAIN_PRIVATE_KEY=
-API_BASE_URL=
-ENCRYPTION_KEY=
-
-3.⁠ ⁠Run API
-
-cd app/api
+### Run the MVP pipeline
+From the repo root:
+```bash
 npm run dev
+```
+This executes `ts-node` with the project `tsconfig` and boots the API helper located in `app/api`. Adjust the entry point as you flesh out additional services.
 
-4.⁠ ⁠Run mobile app
+### Mobile prototype
+Mobile glue code lives under `app/mobile`. The repo currently exposes helper modules (e.g., `imageCaptureHandler.ts`) that you can integrate into a React Native or native shell. Bring your own bundler (`expo`, `xcodebuild`, etc.) to exercise them.
 
-cd app/mobile
-npm start
-
-
----
-
-🧪 Testing
-
-Run the test suite:
-
+## Testing
+Run the Jest suite (defaults to `tests/unit`):
+```bash
 npm test
-# or:
-pytest
+```
+Add new specs near the code under test (e.g., `tests/unit/sdk` for SDK logic).
 
+## Verification Pipeline (High-Level)
+1. Capture image and collect EXIF + sensor metadata.
+2. Encrypt payload locally and hash image + metadata bundle.
+3. Submit payload to the backend.
+4. Run verification engine checks (EXIF, depth cues, GPS, device signature, environment).
+5. Anchor the resulting hash on-chain.
+6. Return the authenticity certificate to the requesting client.
 
----
+See `docs/verification_pipeline.md` for an end-to-end sequence.
 
-🔍 Verification Pipeline (High-Level)
+## SDK Foundation Status
+- Interfaces defined for capture, hashing, blockchain signing, metadata extraction, and verification.
+- Skeleton implementations in `sdk/core`.
+- Adapter-ready folder structure to support platform-specific integrations.
+- Usage examples in `sdk/examples`.
 
-1.⁠ ⁠Capture Event
+## Roadmap Snapshot
+- Full mobile SDK with native bindings.
+- On-device depth sensing + fusion.
+- Zero-knowledge metadata proofs.
+- Video authenticity support.
+- Public verification portal and newsroom/legal integrations.
 
-
-2.⁠ ⁠Extract EXIF + sensor metadata
-
-
-3.⁠ ⁠Local encryption
-
-
-4.⁠ ⁠Hash(image + metadata)
-
-
-5.⁠ ⁠Send to backend
-
-
-6.⁠ ⁠Run Verification Engine
-
-
-7.⁠ ⁠Blockchain signing
-
-
-8.⁠ ⁠Return authenticity certificate
-
-
-
-See /docs/verification_pipeline.md for full details.
-
-
----
-
-🔧 SDK Foundation
-
-The SDK is not complete yet — this is the foundation:
-
-Interfaces for all core modules
-
-Skeleton implementations
-
-Adapter-ready structure
-
-Example usage
-
-Clear future roadmap
-
-
-This allows the SDK to evolve independently of the main app.
-
-
----
-
-🌍 Future Roadmap (Short Version)
-
-Full mobile SDK
-
-On-device depth sensing
-
-Zero-knowledge metadata proofs
-
-Support for video authenticity
-
-Public verification portal
-
-Integrations for:
-
-news agencies
-
-social platforms
-
-legal evidence systems
-
-insurance companies
-
-
-
-Full roadmap in /sdk/ROADMAP.md.
+Read `sdk/ROADMAP.md` for the detailed roadmap and milestones.
