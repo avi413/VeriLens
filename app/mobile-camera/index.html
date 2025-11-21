@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeriLens Camera</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Camera View -->
+      <div id="camera-view" class="view active">
+        <div class="header">
+          <h1>📸 VeriLens Camera</h1>
+          <div class="status" id="status">Ready</div>
+          <div class="header-buttons">
+            <button id="show-saved-images" class="btn btn-small">
+              📁 Saved
+            </button>
+            <button id="show-hash-checker" class="btn btn-small">
+              🔍 Hash
+            </button>
+          </div>
+        </div>
+
+        <div class="camera-container">
+          <video id="camera" autoplay playsinline></video>
+          <canvas id="canvas" style="display: none"></canvas>
+
+          <!-- Camera overlay -->
+          <div class="camera-overlay">
+            <div class="capture-frame"></div>
+            <div class="instructions">Position your photo within the frame</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="start-camera" class="btn btn-primary">
+            📹 Start Camera
+          </button>
+          <button id="capture" class="btn btn-capture" disabled>
+            📸 Capture
+          </button>
+          <button id="flip-camera" class="btn btn-secondary" disabled>
+            🔄 Flip
+          </button>
+        </div>
+      </div>
+
+      <!-- Processing View -->
+      <div id="processing-view" class="view">
+        <div class="header">
+          <button id="back-to-camera" class="btn btn-back">← Back</button>
+          <h1>🔄 Processing...</h1>
+        </div>
+
+        <div class="processing-container">
+          <img
+            id="captured-image"
+            class="captured-photo"
+            alt="Captured Photo"
+          />
+
+          <div class="processing-steps">
+            <div class="step" id="step-hash">
+              <span class="icon">🔐</span>
+              <span class="text">Generating cryptographic hash...</span>
+              <span class="status">⏳</span>
+            </div>
+            <div class="step" id="step-metadata">
+              <span class="icon">📊</span>
+              <span class="text">Extracting metadata...</span>
+              <span class="status">⏳</span>
+            </div>
+            <div class="step" id="step-blockchain">
+              <span class="icon">⛓️</span>
+              <span class="text">Creating blockchain signature...</span>
+              <span class="status">⏳</span>
+            </div>
+            <div class="step" id="step-verification">
+              <span class="icon">✅</span>
+              <span class="text">Verifying authenticity...</span>
+              <span class="status">⏳</span>
+            </div>
+          </div>
+
+          <button id="view-results" class="btn btn-primary" disabled>
+            📊 View Results
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard View -->
+      <div id="dashboard-view" class="view">
+        <div class="header">
+          <button id="back-to-processing" class="btn btn-back">← Back</button>
+          <h1>📊 Verification Results</h1>
+        </div>
+
+        <div class="dashboard-container">
+          <!-- Verification Status -->
+          <div class="result-card">
+            <div class="verdict" id="verdict">
+              <span class="icon">✅</span>
+              <span class="text">Verified Authentic</span>
+            </div>
+            <div class="confidence">
+              <span>Confidence: </span>
+              <span id="confidence-score">95%</span>
+            </div>
+          </div>
+
+          <!-- Hash Information -->
+          <div class="info-card">
+            <h3>🔐 Cryptographic Hash</h3>
+            <div class="hash-display">
+              <code id="hash-value">Loading...</code>
+              <button id="copy-hash" class="btn btn-small">📋 Copy</button>
+            </div>
+            <p class="timestamp" id="hash-timestamp"></p>
+          </div>
+
+          <!-- Authenticity Proof -->
+          <div class="info-card">
+            <h3>🛡️ Authenticity Verification</h3>
+            <div class="authenticity-info">
+              <div class="auth-item">
+                <span class="label">Trust Score:</span>
+                <span class="value" id="trust-score">Loading...</span>
+              </div>
+              <div class="auth-item">
+                <span class="label">Capture Method:</span>
+                <span class="value" id="capture-method">Live Camera</span>
+              </div>
+              <div class="auth-item">
+                <span class="label">Device Fingerprint:</span>
+                <span class="value" id="device-fingerprint">Loading...</span>
+              </div>
+              <div class="auth-item">
+                <span class="label">EXIF Present:</span>
+                <span class="value" id="exif-present">Loading...</span>
+              </div>
+            </div>
+            <div class="verification-explanation">
+              <h4>🔍 How We Verify Authenticity:</h4>
+              <ol>
+                <li>
+                  <strong>Live Camera Proof:</strong> Captured from active video
+                  stream
+                </li>
+                <li>
+                  <strong>Cryptographic Hash:</strong> Image tampering detection
+                </li>
+                <li>
+                  <strong>Device Fingerprint:</strong> Unique hardware signature
+                </li>
+                <li>
+                  <strong>Blockchain Storage:</strong> Immutable proof record
+                </li>
+                <li>
+                  <strong>Timestamp Validation:</strong> Real-time capture
+                  verification
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Blockchain Information -->
+          <div class="info-card">
+            <h3>⛓️ Blockchain Proof</h3>
+            <div class="blockchain-info">
+              <div class="blockchain-item">
+                <span class="label">Transaction:</span>
+                <span class="value" id="tx-hash">Loading...</span>
+              </div>
+              <div class="blockchain-item">
+                <span class="label">Block:</span>
+                <span class="value" id="block-number">Loading...</span>
+              </div>
+              <div class="blockchain-item">
+                <span class="label">Network:</span>
+                <span class="value" id="network">VeriLens Chain</span>
+              </div>
+              <div class="blockchain-item">
+                <span class="label">Trust Score:</span>
+                <span class="value" id="blockchain-trust-score"
+                  >Loading...</span
+                >
+              </div>
+              <div class="blockchain-item">
+                <span class="label">Explorer:</span>
+                <a href="#" id="blockchain-url" target="_blank" class="link"
+                  >View on Explorer 🔗</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Metadata Information -->
+          <div class="info-card">
+            <h3>📊 Photo Metadata</h3>
+            <div class="metadata-grid">
+              <div class="metadata-item">
+                <span class="label">Timestamp:</span>
+                <span class="value" id="photo-timestamp">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">Device:</span>
+                <span class="value" id="device-info">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">Camera:</span>
+                <span class="value" id="camera-info">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">Location:</span>
+                <span class="value" id="location-info">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">Dimensions:</span>
+                <span class="value" id="dimensions">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">File Size:</span>
+                <span class="value" id="file-size">Loading...</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">Format:</span>
+                <span class="value" id="file-format">JPEG</span>
+              </div>
+              <div class="metadata-item">
+                <span class="label">User Agent:</span>
+                <span class="value" id="user-agent" title="Full user agent"
+                  >Loading...</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Verification Checker -->
+          <div class="info-card verification-checker">
+            <h3>🔍 How to Verify This Image is Real</h3>
+            <div class="verification-steps">
+              <div class="verify-step" id="verify-step-1">
+                <div class="step-header">
+                  <span class="step-number">1</span>
+                  <span class="step-title">Hash Verification</span>
+                  <span class="step-status" id="hash-verify-status">✅</span>
+                </div>
+                <div class="step-content">
+                  <p>
+                    Re-calculate image hash and compare with blockchain record
+                  </p>
+                  <div class="hash-comparison">
+                    <div class="hash-item">
+                      <span class="label">Original Hash:</span>
+                      <span class="value" id="original-hash-display"
+                        >Loading...</span
+                      >
+                    </div>
+                    <div class="hash-item">
+                      <span class="label">Current Hash:</span>
+                      <span class="value" id="current-hash-display"
+                        >Loading...</span
+                      >
+                    </div>
+                    <div class="hash-match" id="hash-match-result">
+                      <span class="match-status"
+                        >✅ Hashes Match - Image Not Tampered</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="verify-step" id="verify-step-2">
+                <div class="step-header">
+                  <span class="step-number">2</span>
+                  <span class="step-title">Blockchain Verification</span>
+                  <span class="step-status" id="blockchain-verify-status"
+                    >✅</span
+                  >
+                </div>
+                <div class="step-content">
+                  <p>
+                    Verify proof exists on blockchain and signature is valid
+                  </p>
+                  <button class="btn btn-small" id="verify-blockchain">
+                    🔍 Verify on Blockchain
+                  </button>
+                </div>
+              </div>
+
+              <div class="verify-step" id="verify-step-3">
+                <div class="step-header">
+                  <span class="step-number">3</span>
+                  <span class="step-title">Device Fingerprint Check</span>
+                  <span class="step-status" id="device-verify-status">✅</span>
+                </div>
+                <div class="step-content">
+                  <p>Verify device fingerprints match capture device</p>
+                  <div class="fingerprint-check" id="fingerprint-details">
+                    <!-- Will be populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="verify-step" id="verify-step-4">
+                <div class="step-header">
+                  <span class="step-number">4</span>
+                  <span class="step-title">Timestamp Validation</span>
+                  <span class="step-status" id="time-verify-status">✅</span>
+                </div>
+                <div class="step-content">
+                  <p>
+                    Check if capture time is consistent with blockchain
+                    timestamp
+                  </p>
+                  <div class="time-check" id="timestamp-details">
+                    <!-- Will be populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="verify-step" id="verify-step-5">
+                <div class="step-header">
+                  <span class="step-number">5</span>
+                  <span class="step-title">Live Capture Proof</span>
+                  <span class="step-status" id="live-verify-status">✅</span>
+                </div>
+                <div class="step-content">
+                  <p>
+                    Verify this was captured from live camera, not uploaded file
+                  </p>
+                  <div class="live-proof" id="live-capture-details">
+                    <!-- Will be populated by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overall-verification" id="overall-result">
+              <div class="verification-result authentic">
+                <span class="result-icon">🛡️</span>
+                <span class="result-text">AUTHENTIC IMAGE</span>
+                <span class="confidence">Confidence: 95%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Save Information -->
+          <div id="save-info" class="info-card" style="display: none">
+            <!-- Save info will be populated by JavaScript -->
+          </div>
+
+          <!-- Actions -->
+          <div class="actions">
+            <button id="download-image" class="btn btn-primary">
+              ⬇️ Download Image
+            </button>
+            <button id="save-image" class="btn btn-secondary">
+              💾 Save to Server
+            </button>
+            <button id="download-metadata" class="btn btn-secondary">
+              📄 Download Metadata
+            </button>
+            <button id="save-certificate" class="btn btn-secondary">
+              📜 Save Certificate
+            </button>
+            <button id="share-results" class="btn btn-secondary">
+              📤 Share Results
+            </button>
+            <button id="new-photo" class="btn btn-success">
+              📸 Take New Photo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hash Checker View -->
+      <div id="hash-checker-view" class="view">
+        <div class="header">
+          <button id="back-from-hash-checker" class="btn btn-back">
+            ← Back
+          </button>
+          <h1>🔍 Image Hash Checker</h1>
+        </div>
+
+        <div class="hash-checker-container">
+          <div class="info-card">
+            <h3>📋 Where to Find Image Hashes</h3>
+            <div class="hash-sources">
+              <div class="source-item">
+                <span class="source-icon">📸</span>
+                <div class="source-info">
+                  <h4>VeriLens Captured Images</h4>
+                  <p>
+                    Hash is displayed in the verification dashboard after taking
+                    a photo
+                  </p>
+                  <span class="location"
+                    >Location: Dashboard → Cryptographic Hash section</span
+                  >
+                </div>
+              </div>
+
+              <div class="source-item">
+                <span class="source-icon">💾</span>
+                <div class="source-info">
+                  <h4>Saved Metadata Files</h4>
+                  <p>
+                    Hash is stored in the .metadata.json file alongside saved
+                    images
+                  </p>
+                  <span class="location"
+                    >Location: saved-images/filename.jpg.metadata.json</span
+                  >
+                </div>
+              </div>
+
+              <div class="source-item">
+                <span class="source-icon">⛓️</span>
+                <div class="source-info">
+                  <h4>Blockchain Records</h4>
+                  <p>Hash is permanently stored on the VeriLens blockchain</p>
+                  <span class="location"
+                    >Location: Blockchain Explorer → Transaction Details</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>🧮 Calculate Image Hash</h3>
+            <div class="hash-calculator">
+              <div class="upload-section">
+                <input
+                  type="file"
+                  id="hash-file-input"
+                  accept="image/*"
+                  style="display: none"
+                />
+                <button id="select-image-btn" class="btn btn-primary">
+                  📁 Select Image File
+                </button>
+                <div class="drag-drop-area" id="drag-drop-area">
+                  <p>Or drag and drop an image here</p>
+                </div>
+              </div>
+
+              <div
+                id="hash-result-section"
+                class="hash-result"
+                style="display: none"
+              >
+                <h4>📊 Hash Calculation Result</h4>
+                <div class="hash-display">
+                  <div class="hash-row">
+                    <span class="label">Algorithm:</span>
+                    <span class="value" id="hash-algorithm">SHA-256</span>
+                  </div>
+                  <div class="hash-row">
+                    <span class="label">Image Hash:</span>
+                    <div class="hash-value-container">
+                      <code id="calculated-hash">Calculating...</code>
+                      <button id="copy-calculated-hash" class="btn btn-small">
+                        📋 Copy
+                      </button>
+                    </div>
+                  </div>
+                  <div class="hash-row">
+                    <span class="label">File Size:</span>
+                    <span class="value" id="hash-file-size">0 KB</span>
+                  </div>
+                  <div class="hash-row">
+                    <span class="label">Dimensions:</span>
+                    <span class="value" id="hash-dimensions">0x0</span>
+                  </div>
+                </div>
+
+                <div class="verification-section">
+                  <h4>🔍 Verify Against VeriLens</h4>
+                  <div class="verify-input-group">
+                    <input
+                      type="text"
+                      id="expected-hash-input"
+                      placeholder="Paste expected hash from VeriLens record..."
+                    />
+                    <button id="compare-hash-btn" class="btn btn-secondary">
+                      Compare
+                    </button>
+                  </div>
+                  <div id="hash-comparison-result" style="display: none"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>📝 How to Use Image Hashes for Verification</h3>
+            <div class="usage-steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4>Get the Original Hash</h4>
+                  <p>
+                    From VeriLens dashboard, saved metadata, or blockchain
+                    record
+                  </p>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4>Calculate Current Hash</h4>
+                  <p>Use this tool to hash the image you want to verify</p>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4>Compare Hashes</h4>
+                  <p>
+                    If they match exactly → Image is authentic and untampered
+                  </p>
+                  <p>If they differ → Image has been modified or is fake</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="camera.js"></script>
+    <script src="verification.js"></script>
+    <script>
+      // Initialize the app
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('📱 VeriLens Camera App initialized');
+        CameraApp.init();
+      });
+    </script>
+  </body>
+</html>

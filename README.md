@@ -2,6 +2,33 @@
 
 VeriLens is a modular framework for proving that a photo was captured by a real device, at a specific time and place, without AI manipulation. The system combines secure capture, metadata preservation, cryptographic hashing, verification heuristics, and blockchain anchoring to produce public authenticity certificates.
 
+## 📱 Mobile Camera App (Recommended)
+
+### **Simple Mobile Camera Like iOS/Android**
+Clean, native-like mobile camera experience:
+```bash
+npm run camera       # Start mobile camera app
+# Opens: http://localhost:3001
+```
+
+**📱 Mobile Features:**
+- 📸 **Native camera experience** - Just like iOS/Android camera
+- 🔄 **Flip camera** - Front/back camera switching
+- ⚡ **Real-time processing** - Step-by-step verification
+- 🏆 **Verification dashboard** - Hash, blockchain, metadata
+- 🔗 **Blockchain explorer links** - View proofs on blockchain
+- 💾 **Save certificates** - Download verification certificates
+- 📤 **Share results** - Native sharing capabilities
+
+## 🌐 Web Demo (Legacy)
+
+### **Development Web Interface**
+Full-featured web interface for testing:
+```bash
+npm run start:web    # Build SDK + start server
+# Opens: http://localhost:3000
+```
+
 ## Components
 - MVP application: capture, metadata extraction, hashing, blockchain signing.
 - Verification engine: depth analysis, EXIF validation, tamper detection.

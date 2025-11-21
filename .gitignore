@@ -1,6 +1,5 @@
-node_modules
-dist
-coverage
-config/secrets.json
-.env
-data
+node_modules/
+*.log
+.DS_Store
+app/mobile-camera/saved-images/*
+!app/mobile-camera/saved-images/README.md

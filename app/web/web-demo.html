@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeriLens SDK Web Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 40px;
+      }
+
+      .demo-section {
+        margin-bottom: 40px;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border-left: 5px solid #3498db;
+      }
+
+      .demo-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .demo-section h2::before {
+        content: attr(data-icon);
+        margin-right: 10px;
+        font-size: 1.5rem;
+      }
+
+      .file-input-container {
+        margin-bottom: 20px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .file-input-label {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #3498db;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-weight: 500;
+      }
+
+      .file-input-label:hover {
+        background: #2980b9;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 10px 10px 10px 0;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #219a52;
+      }
+
+      .btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: #e74c3c;
+      }
+
+      .btn-secondary:hover {
+        background: #c0392b;
+      }
+
+      .result-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e1e8ed;
+      }
+
+      .result-item {
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f1f2f6;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+      }
+
+      .result-item h4 {
+        color: #2c3e50;
+        margin-bottom: 8px;
+      }
+
+      .result-item pre {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+      }
+
+      .status {
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 500;
+        display: inline-block;
+        margin: 10px 0;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status.warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .image-preview {
+        max-width: 300px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin: 10px 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔒 VeriLens SDK</h1>
+        <p>Cryptographic Photo Authenticity Framework - Web Demo</p>
+      </div>
+
+      <div class="content">
+        <!-- File Upload Section -->
+        <div class="demo-section">
+          <h2 data-icon="📷">Image Upload & Processing</h2>
+          <div class="file-input-container">
+            <input
+              type="file"
+              id="imageInput"
+              class="file-input"
+              accept="image/*"
+            />
+            <label for="imageInput" class="file-input-label">
+              📁 Choose Image File
+            </label>
+            <div id="imagePreview"></div>
+          </div>
+          <button class="btn" onclick="processImage()" id="processBtn" disabled>
+            🚀 Process with VeriLens SDK
+          </button>
+          <button class="btn btn-secondary" onclick="runDemo()" id="demoBtn">
+            🎬 Run Demo with Mock Data
+          </button>
+        </div>
+
+        <!-- Results Grid -->
+        <div class="grid" id="resultsGrid">
+          <!-- Results will be populated here -->
+        </div>
+
+        <!-- Full Certificate Section -->
+        <div class="demo-section" id="certificateSection" style="display: none">
+          <h2 data-icon="🏆">Authenticity Certificate</h2>
+          <div class="result-container">
+            <div id="certificateResult"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedFile = null;
+      let processingResults = {};
+
+      // File input handling
+      document
+        .getElementById('imageInput')
+        .addEventListener('change', function (e) {
+          selectedFile = e.target.files[0];
+          const processBtn = document.getElementById('processBtn');
+
+          if (selectedFile) {
+            processBtn.disabled = false;
+            displayImagePreview(selectedFile);
+          } else {
+            processBtn.disabled = true;
+            document.getElementById('imagePreview').innerHTML = '';
+          }
+        });
+
+      function displayImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const preview = document.getElementById('imagePreview');
+          preview.innerHTML = `
+                    <div style="margin-top: 15px;">
+                        <p><strong>Selected:</strong> ${file.name} (${(
+            file.size / 1024
+          ).toFixed(2)} KB)</p>
+                        <img src="${
+                          e.target.result
+                        }" alt="Preview" class="image-preview">
+                    </div>
+                `;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function processImage() {
+        if (!selectedFile) {
+          alert('Please select an image first!');
+          return;
+        }
+
+        showLoading(true);
+        clearResults();
+
+        try {
+          // Convert file to buffer-like data
+          const arrayBuffer = await selectedFile.arrayBuffer();
+          const uint8Array = new Uint8Array(arrayBuffer);
+
+          // Simulate VeriLens SDK processing
+          await simulateSDKProcessing(uint8Array, selectedFile.name);
+        } catch (error) {
+          showResult(
+            'Error',
+            `Failed to process image: ${error.message}`,
+            'error'
+          );
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      async function runDemo() {
+        showLoading(true);
+        clearResults();
+
+        try {
+          // Simulate with mock data
+          const mockData = new TextEncoder().encode(
+            'Mock JPEG image data for VeriLens demo'
+          );
+          await simulateSDKProcessing(mockData, 'demo-image.jpg');
+        } catch (error) {
+          showResult('Error', `Demo failed: ${error.message}`, 'error');
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      async function simulateSDKProcessing(imageData, filename) {
+        // Step 1: Hash Generation
+        showResult(
+          '🔐 Cryptographic Hashing',
+          'Computing SHA-256 hash...',
+          'warning'
+        );
+        await delay(800);
+        const hash = await computeHash(imageData);
+        processingResults.hash = hash;
+        showResult(
+          '🔐 Cryptographic Hashing',
+          `SHA-256: ${hash.substring(
+            0,
+            32
+          )}...\\nAlgorithm: sha256\\nTimestamp: ${new Date().toISOString()}`,
+          'success'
+        );
+
+        // Step 2: Encryption
+        showResult(
+          '🔒 AES Encryption',
+          'Encrypting image data with AES-256-GCM...',
+          'warning'
+        );
+        await delay(600);
+        const encrypted = simulateEncryption(imageData);
+        processingResults.encrypted = encrypted;
+        showResult(
+          '🔒 AES Encryption',
+          `Encrypted successfully\\nIV Length: ${encrypted.ivLength} bytes\\nAuth Tag: ${encrypted.authTagLength} bytes\\nCiphertext: ${encrypted.preview}...`,
+          'success'
+        );
+
+        // Step 3: Metadata Extraction
+        showResult(
+          '📋 Metadata Extraction',
+          'Extracting EXIF metadata...',
+          'warning'
+        );
+        await delay(500);
+        const metadata = simulateMetadataExtraction(filename);
+        processingResults.metadata = metadata;
+        showResult(
+          '📋 Metadata Extraction',
+          `Device: ${metadata.deviceMake} ${metadata.deviceModel}\\nISO: ${metadata.iso}\\nTimestamp: ${metadata.timestamp}\\nLocation: ${metadata.latitude}, ${metadata.longitude}`,
+          'success'
+        );
+
+        // Step 4: Blockchain Signing
+        showResult(
+          '⛓️ Blockchain Signing',
+          'Signing with blockchain...',
+          'warning'
+        );
+        await delay(1000);
+        const signature = simulateBlockchainSigning(hash);
+        processingResults.signature = signature;
+        showResult(
+          '⛓️ Blockchain Signing',
+          `Chain ID: ${signature.chainId}\\nSigner: ${
+            signature.signerId
+          }\\nSignature: ${signature.signature.substring(
+            0,
+            32
+          )}...\\nTimestamp: ${signature.timestamp}`,
+          'success'
+        );
+
+        // Step 5: Verification
+        showResult(
+          '✅ Verification Pipeline',
+          'Running authenticity verification...',
+          'warning'
+        );
+        await delay(700);
+        const verification = simulateVerification();
+        processingResults.verification = verification;
+        showResult(
+          '✅ Verification Pipeline',
+          `Verdict: ${verification.verdict.toUpperCase()}\\nEXIF Score: ${
+            verification.exifScore
+          }\\nDepth Score: ${verification.depthScore || 'N/A'}\\nConfidence: ${
+            verification.confidence
+          }`,
+          verification.verdict === 'pass' ? 'success' : 'warning'
+        );
+
+        // Step 6: Generate Certificate
+        generateCertificate();
+      }
+
+      function generateCertificate() {
+        const certificate = {
+          version: '1.0',
+          imageHash: processingResults.hash,
+          metadata: processingResults.metadata,
+          verification: processingResults.verification,
+          blockchain: processingResults.signature,
+          encryption: {
+            algorithm: 'AES-256-GCM',
+            ivLength: processingResults.encrypted.ivLength,
+            authTagLength: processingResults.encrypted.authTagLength,
+          },
+          generatedAt: new Date().toISOString(),
+          sdk: {
+            name: 'VeriLens',
+            version: '0.1.0',
+            environment: 'web-demo',
+          },
+        };
+
+        const certificateSection =
+          document.getElementById('certificateSection');
+        const certificateResult = document.getElementById('certificateResult');
+
+        certificateResult.innerHTML = `
+                <div class="status success">✅ Authenticity Certificate Generated Successfully</div>
+                <pre>${JSON.stringify(certificate, null, 2)}</pre>
+                <button class="btn" onclick="downloadCertificate('${JSON.stringify(
+                  certificate
+                )}')">
+                    💾 Download Certificate
+                </button>
+                <button class="btn" onclick="copyCertificate('${JSON.stringify(
+                  certificate
+                ).replace(/'/g, "\\'")}')">
+                    📋 Copy to Clipboard
+                </button>
+            `;
+
+        certificateSection.style.display = 'block';
+        certificateSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // Simulation Functions
+      async function computeHash(data) {
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      function simulateEncryption(data) {
+        return {
+          ivLength: 16,
+          authTagLength: 16,
+          preview: btoa(String.fromCharCode(...data.slice(0, 20))),
+        };
+      }
+
+      function simulateMetadataExtraction(filename) {
+        return {
+          deviceMake: 'Apple',
+          deviceModel: 'iPhone 14 Pro',
+          iso: 100,
+          fNumber: 1.8,
+          exposureTime: 0.0083,
+          timestamp: new Date().toISOString(),
+          latitude: 37.7749,
+          longitude: -122.4194,
+          orientation: 1,
+          filename: filename,
+        };
+      }
+
+      function simulateBlockchainSigning(hash) {
+        return {
+          chainId: 'verilens-testnet',
+          signerId: 'web-demo-001',
+          signature: hash.substring(0, 64), // Simulate signature
+          timestamp: new Date().toISOString(),
+          blockHeight: Math.floor(Math.random() * 1000000),
+        };
+      }
+
+      function simulateVerification() {
+        const scores = [0.95, 0.87, 0.92, 0.78, 0.88];
+        const exifScore = scores[Math.floor(Math.random() * scores.length)];
+        return {
+          verdict:
+            exifScore > 0.8 ? 'pass' : exifScore > 0.6 ? 'review' : 'fail',
+          exifScore: exifScore,
+          depthScore: Math.random() > 0.5 ? Math.random() * 0.4 + 0.6 : null,
+          confidence: exifScore,
+          checks: {
+            deviceSignature: true,
+            metadataIntegrity: true,
+            depthConsistency: Math.random() > 0.3,
+            gpsPlausibility: true,
+          },
+        };
+      }
+
+      // Utility Functions
+      function showResult(title, content, status) {
+        const grid = document.getElementById('resultsGrid');
+        const existingResult = document.getElementById(
+          title.replace(/[^a-zA-Z0-9]/g, '')
+        );
+
+        const resultHTML = `
+                <div class="demo-section" id="${title.replace(
+                  /[^a-zA-Z0-9]/g,
+                  ''
+                )}">
+                    <h2 data-icon="">${title}</h2>
+                    <div class="result-container">
+                        <div class="status ${status}">${content}</div>
+                    </div>
+                </div>
+            `;
+
+        if (existingResult) {
+          existingResult.outerHTML = resultHTML;
+        } else {
+          grid.innerHTML += resultHTML;
+        }
+      }
+
+      function clearResults() {
+        document.getElementById('resultsGrid').innerHTML = '';
+        document.getElementById('certificateSection').style.display = 'none';
+        processingResults = {};
+      }
+
+      function showLoading(show) {
+        const processBtn = document.getElementById('processBtn');
+        const demoBtn = document.getElementById('demoBtn');
+
+        if (show) {
+          processBtn.innerHTML = '<div class="loading"></div>Processing...';
+          demoBtn.innerHTML = '<div class="loading"></div>Running Demo...';
+          processBtn.disabled = true;
+          demoBtn.disabled = true;
+        } else {
+          processBtn.innerHTML = '🚀 Process with VeriLens SDK';
+          demoBtn.innerHTML = '🎬 Run Demo with Mock Data';
+          processBtn.disabled = !selectedFile;
+          demoBtn.disabled = false;
+        }
+      }
+
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function downloadCertificate(certificateJson) {
+        const blob = new Blob([certificateJson], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `verilens-certificate-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function copyCertificate(certificateJson) {
+        navigator.clipboard
+          .writeText(certificateJson)
+          .then(() => {
+            alert('Certificate copied to clipboard!');
+          })
+          .catch((err) => {
+            console.error('Failed to copy: ', err);
+          });
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 VeriLens Web Demo initialized');
+      });
+    </script>
+  </body>
+</html>

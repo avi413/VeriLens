@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeriLens SDK Web Demo - Real Backend</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin: 5px;
+        display: inline-block;
+      }
+
+      .content {
+        padding: 40px;
+      }
+
+      .demo-section {
+        margin-bottom: 40px;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border-left: 5px solid #3498db;
+      }
+
+      .demo-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .demo-section h2::before {
+        content: attr(data-icon);
+        margin-right: 10px;
+        font-size: 1.5rem;
+      }
+
+      .file-input-container {
+        margin-bottom: 20px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .file-input-label {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #3498db;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-weight: 500;
+      }
+
+      .file-input-label:hover {
+        background: #2980b9;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 10px 10px 10px 0;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #219a52;
+      }
+
+      .btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: #e74c3c;
+      }
+
+      .btn-secondary:hover {
+        background: #c0392b;
+      }
+
+      .btn-info {
+        background: #3498db;
+      }
+
+      .btn-info:hover {
+        background: #2980b9;
+      }
+
+      .result-container {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e1e8ed;
+      }
+
+      .status {
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 500;
+        display: inline-block;
+        margin: 10px 0;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status.warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .image-preview {
+        max-width: 300px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin: 10px 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .certificate {
+        background: #f8f9fa;
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .certificate pre {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        max-height: 400px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card h3 {
+        color: #3498db;
+        font-size: 2rem;
+        margin-bottom: 5px;
+      }
+
+      .stat-card p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .server-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        z-index: 1000;
+      }
+
+      .server-status.online {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .server-status.offline {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .camera-container {
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .camera-video {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 10px;
+        background: #2c3e50;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .camera-canvas {
+        display: none;
+      }
+
+      .camera-controls {
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .camera-section {
+        background: #e8f5e8;
+        border-left: 5px solid #27ae60;
+      }
+
+      .camera-preview {
+        margin: 15px 0;
+        text-align: center;
+      }
+
+      .captured-image {
+        max-width: 300px;
+        max-height: 200px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="server-status" id="serverStatus">🔍 Checking server...</div>
+
+    <div class="container">
+      <div class="header">
+        <h1>🔒 VeriLens SDK</h1>
+        <p>Real Backend Integration Demo</p>
+        <div>
+          <span class="badge">✅ Real VeriLens SDK</span>
+          <span class="badge">🔐 SHA-256 Hashing</span>
+          <span class="badge">🔒 AES-256-GCM</span>
+          <span class="badge">⛓️ Blockchain Signing</span>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Server Status Section -->
+        <div class="demo-section">
+          <h2 data-icon="🌐">Server Status</h2>
+          <div id="healthStatus">Checking server health...</div>
+          <button class="btn btn-info" onclick="checkHealth()">
+            🔄 Refresh Status
+          </button>
+        </div>
+
+        <!-- Camera Capture Section -->
+        <div class="demo-section camera-section">
+          <h2 data-icon="📸">Live Camera Capture</h2>
+          <div class="camera-container">
+            <video
+              id="cameraVideo"
+              class="camera-video"
+              autoplay
+              playsinline
+            ></video>
+            <canvas id="cameraCanvas" class="camera-canvas"></canvas>
+            <div class="camera-controls">
+              <button
+                class="btn btn-info"
+                onclick="startCamera()"
+                id="startCameraBtn"
+              >
+                📹 Start Camera
+              </button>
+              <button
+                class="btn"
+                onclick="capturePhoto()"
+                id="captureBtn"
+                disabled
+              >
+                📸 Capture Photo
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="stopCamera()"
+                id="stopCameraBtn"
+                disabled
+              >
+                🛑 Stop Camera
+              </button>
+            </div>
+            <div id="cameraPreview" class="camera-preview"></div>
+          </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="demo-section">
+          <h2 data-icon="📁">File Upload Alternative</h2>
+          <div class="file-input-container">
+            <input
+              type="file"
+              id="imageInput"
+              class="file-input"
+              accept="image/*"
+            />
+            <label for="imageInput" class="file-input-label">
+              📁 Choose Image File
+            </label>
+            <div id="imagePreview"></div>
+          </div>
+        </div>
+
+        <!-- Processing Section -->
+        <div class="demo-section">
+          <h2 data-icon="⚡">Process Image</h2>
+          <button
+            class="btn"
+            onclick="processWithRealSDK()"
+            id="processBtn"
+            disabled
+          >
+            🚀 Process with Real VeriLens SDK
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="runRealDemo()"
+            id="demoBtn"
+          >
+            🎬 Run Backend Demo
+          </button>
+          <div
+            id="currentImageInfo"
+            style="margin-top: 15px; font-size: 0.9rem; color: #666"
+          ></div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="demo-section" id="resultsSection" style="display: none">
+          <h2 data-icon="📊">Processing Results</h2>
+          <div id="processingResults"></div>
+        </div>
+
+        <!-- Certificate Section -->
+        <div class="demo-section" id="certificateSection" style="display: none">
+          <h2 data-icon="🏆">Authenticity Certificate</h2>
+          <div class="certificate">
+            <div id="certificateResult"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedFile = null;
+      let serverOnline = false;
+      let cameraStream = null;
+      let capturedImageBlob = null;
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', async function () {
+        console.log('🚀 VeriLens Web Demo (Real Backend) initialized');
+        await checkHealth();
+        setupFileInput();
+        setupCameraControls();
+      });
+
+      // Cleanup camera when page unloads
+      window.addEventListener('beforeunload', function () {
+        if (cameraStream) {
+          stopCamera();
+        }
+      });
+
+      function setupFileInput() {
+        document
+          .getElementById('imageInput')
+          .addEventListener('change', function (e) {
+            selectedFile = e.target.files[0];
+
+            if (selectedFile) {
+              // Clear camera capture if file is selected
+              capturedImageBlob = null;
+              document.getElementById('cameraPreview').innerHTML = '';
+
+              displayImagePreview(selectedFile);
+
+              const info = document.getElementById('currentImageInfo');
+              info.innerHTML = `📁 <strong>File selected:</strong> ${
+                selectedFile.name
+              } (${(selectedFile.size / 1024).toFixed(2)} KB)`;
+            } else {
+              document.getElementById('imagePreview').innerHTML = '';
+              document.getElementById('currentImageInfo').innerHTML = '';
+            }
+
+            updateButtonStates();
+          });
+      }
+
+      function displayImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const preview = document.getElementById('imagePreview');
+          preview.innerHTML = `
+                    <div style="margin-top: 15px;">
+                        <p><strong>Selected:</strong> ${file.name} (${(
+            file.size / 1024
+          ).toFixed(2)} KB)</p>
+                        <img src="${
+                          e.target.result
+                        }" alt="Preview" class="image-preview">
+                    </div>
+                `;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Camera Functions
+      function setupCameraControls() {
+        const video = document.getElementById('cameraVideo');
+
+        // Check if camera is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          document.getElementById('startCameraBtn').innerHTML =
+            '❌ Camera Not Supported';
+          document.getElementById('startCameraBtn').disabled = true;
+          return;
+        }
+      }
+
+      async function startCamera() {
+        try {
+          const startBtn = document.getElementById('startCameraBtn');
+          const captureBtn = document.getElementById('captureBtn');
+          const stopBtn = document.getElementById('stopCameraBtn');
+
+          startBtn.innerHTML = '🔄 Starting Camera...';
+          startBtn.disabled = true;
+
+          // Request camera access with high-quality settings
+          cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              width: { ideal: 1920, max: 1920 },
+              height: { ideal: 1080, max: 1080 },
+              facingMode: 'environment', // Use back camera if available
+            },
+          });
+
+          const video = document.getElementById('cameraVideo');
+          video.srcObject = cameraStream;
+
+          startBtn.innerHTML = '✅ Camera Active';
+          captureBtn.disabled = false;
+          stopBtn.disabled = false;
+
+          console.log('📹 Camera started successfully');
+        } catch (error) {
+          console.error('Camera error:', error);
+          const startBtn = document.getElementById('startCameraBtn');
+          startBtn.innerHTML = '❌ Camera Error';
+
+          // Try fallback with basic constraints
+          try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+            });
+            const video = document.getElementById('cameraVideo');
+            video.srcObject = cameraStream;
+            startBtn.innerHTML = '✅ Camera Active (Basic)';
+            document.getElementById('captureBtn').disabled = false;
+            document.getElementById('stopCameraBtn').disabled = false;
+          } catch (fallbackError) {
+            alert('Camera access denied or not available: ' + error.message);
+            startBtn.innerHTML = '📹 Start Camera';
+            startBtn.disabled = false;
+          }
+        }
+      }
+
+      function capturePhoto() {
+        try {
+          const video = document.getElementById('cameraVideo');
+          const canvas = document.getElementById('cameraCanvas');
+          const preview = document.getElementById('cameraPreview');
+
+          // Set canvas size to video dimensions
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+
+          // Draw current video frame to canvas
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Convert to blob for upload
+          canvas.toBlob(
+            function (blob) {
+              capturedImageBlob = blob;
+
+              // Create object URL for preview
+              const imageUrl = URL.createObjectURL(blob);
+
+              // Display captured image preview
+              preview.innerHTML = `
+              <div style="margin-top: 15px;">
+                <p><strong>📸 Photo Captured!</strong> (${(
+                  blob.size / 1024
+                ).toFixed(2)} KB)</p>
+                <img src="${imageUrl}" alt="Captured Photo" class="captured-image">
+                <div style="margin-top: 10px;">
+                  <button class="btn btn-info" onclick="retakePhoto()" style="margin-right: 10px;">
+                    🔄 Retake Photo
+                  </button>
+                  <button class="btn" onclick="useCapturedPhoto()">
+                    ✅ Use This Photo
+                  </button>
+                </div>
+              </div>
+            `;
+
+              // Add metadata info
+              const info = document.getElementById('currentImageInfo');
+              info.innerHTML = `📸 <strong>Camera photo ready:</strong> ${
+                canvas.width
+              }x${canvas.height}px, ${(blob.size / 1024).toFixed(2)} KB`;
+
+              console.log('📸 Photo captured:', {
+                width: canvas.width,
+                height: canvas.height,
+                size: blob.size,
+                type: blob.type,
+              });
+            },
+            'image/jpeg',
+            0.95
+          ); // High quality JPEG
+        } catch (error) {
+          console.error('Capture error:', error);
+          alert('Failed to capture photo: ' + error.message);
+        }
+      }
+
+      function retakePhoto() {
+        capturedImageBlob = null;
+        selectedFile = null;
+        document.getElementById('cameraPreview').innerHTML = '';
+        document.getElementById('currentImageInfo').innerHTML = '';
+        updateButtonStates();
+      }
+
+      function useCapturedPhoto() {
+        if (capturedImageBlob) {
+          // Convert blob to file-like object
+          selectedFile = new File([capturedImageBlob], 'captured-photo.jpg', {
+            type: 'image/jpeg',
+            lastModified: Date.now(),
+          });
+
+          // Clear file input
+          document.getElementById('imageInput').value = '';
+          document.getElementById('imagePreview').innerHTML = '';
+
+          // Update info and button states
+          const info = document.getElementById('currentImageInfo');
+          info.innerHTML = `📸 <strong>Using captured photo:</strong> ${
+            selectedFile.name
+          } (${(selectedFile.size / 1024).toFixed(2)} KB)`;
+
+          updateButtonStates();
+          console.log('✅ Using captured photo for processing');
+        }
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          // Stop all tracks
+          cameraStream.getTracks().forEach((track) => {
+            track.stop();
+          });
+          cameraStream = null;
+
+          // Reset UI
+          const video = document.getElementById('cameraVideo');
+          video.srcObject = null;
+
+          document.getElementById('startCameraBtn').innerHTML =
+            '📹 Start Camera';
+          document.getElementById('startCameraBtn').disabled = false;
+          document.getElementById('captureBtn').disabled = true;
+          document.getElementById('stopCameraBtn').disabled = true;
+
+          console.log('📹 Camera stopped');
+        }
+      }
+
+      async function checkHealth() {
+        try {
+          const response = await fetch('/api/health');
+          const health = await response.json();
+
+          serverOnline = health.status === 'healthy';
+          updateServerStatus(serverOnline);
+          displayHealthStatus(health);
+
+          // Update button states
+          updateButtonStates();
+        } catch (error) {
+          console.error('Health check failed:', error);
+          serverOnline = false;
+          updateServerStatus(false);
+          displayHealthStatus({ error: error.message });
+          updateButtonStates();
+        }
+      }
+
+      function updateServerStatus(online) {
+        const statusElement = document.getElementById('serverStatus');
+        if (online) {
+          statusElement.textContent = '🟢 Server Online';
+          statusElement.className = 'server-status online';
+        } else {
+          statusElement.textContent = '🔴 Server Offline';
+          statusElement.className = 'server-status offline';
+        }
+      }
+
+      function displayHealthStatus(health) {
+        const healthDiv = document.getElementById('healthStatus');
+
+        if (health.status === 'healthy') {
+          healthDiv.innerHTML = `
+                    <div class="status success">✅ Server is healthy and ready!</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>✅</h3>
+                            <p>Hash Service</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>⛓️</h3>
+                            <p>Blockchain Signer</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>📋</h3>
+                            <p>Metadata Extractor</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>🔒</h3>
+                            <p>Encryption</p>
+                        </div>
+                    </div>
+                    <p><small>Last checked: ${health.timestamp}</small></p>
+                `;
+        } else {
+          healthDiv.innerHTML = `
+                    <div class="status error">❌ Server is offline or unreachable</div>
+                    <p><strong>Error:</strong> ${
+                      health.error || 'Unknown error'
+                    }</p>
+                `;
+        }
+      }
+
+      function updateButtonStates() {
+        const processBtn = document.getElementById('processBtn');
+        const demoBtn = document.getElementById('demoBtn');
+
+        // Enable process button if server is online AND we have either a selected file OR captured photo
+        const hasImage = selectedFile || capturedImageBlob;
+        processBtn.disabled = !serverOnline || !hasImage;
+        demoBtn.disabled = !serverOnline;
+      }
+
+      async function processWithRealSDK() {
+        // Check if we have either a file or captured photo
+        const imageToProcess = selectedFile || capturedImageBlob;
+
+        if (!imageToProcess) {
+          alert('Please select an image file or capture a photo first!');
+          return;
+        }
+
+        if (!serverOnline) {
+          alert('Server is offline. Please check connection.');
+          return;
+        }
+
+        showLoading(true);
+        clearResults();
+
+        try {
+          const formData = new FormData();
+
+          // Use the appropriate image source
+          if (selectedFile) {
+            formData.append('image', selectedFile);
+            console.log('📁 Processing uploaded file:', selectedFile.name);
+          } else if (capturedImageBlob) {
+            // Create a file from the blob with proper name
+            const capturedFile = new File(
+              [capturedImageBlob],
+              'camera-capture.jpg',
+              {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              }
+            );
+            formData.append('image', capturedFile);
+            console.log('📸 Processing captured photo:', capturedFile.name);
+          }
+
+          const response = await fetch('/api/verify-image', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            displayProcessingResults(result.results);
+            displayCertificate(result.certificate);
+          } else {
+            throw new Error(result.error || 'Processing failed');
+          }
+        } catch (error) {
+          console.error('Processing error:', error);
+          displayError('Processing failed: ' + error.message);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      async function runRealDemo() {
+        if (!serverOnline) {
+          alert('Server is offline. Please check connection.');
+          return;
+        }
+
+        showLoading(true);
+        clearResults();
+
+        try {
+          const response = await fetch('/api/demo', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            displayDemoResults(result);
+            displayCertificate(result.certificate);
+          } else {
+            throw new Error(result.error || 'Demo failed');
+          }
+        } catch (error) {
+          console.error('Demo error:', error);
+          displayError('Demo failed: ' + error.message);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      function displayProcessingResults(results) {
+        const section = document.getElementById('resultsSection');
+        const container = document.getElementById('processingResults');
+
+        const verdict = results.verification.verdict;
+        const verdictClass =
+          verdict === 'pass'
+            ? 'success'
+            : verdict === 'review'
+            ? 'warning'
+            : 'error';
+
+        container.innerHTML = `
+                <div class="status ${verdictClass}">
+                    ${
+                      verdict === 'pass'
+                        ? '✅'
+                        : verdict === 'review'
+                        ? '⚠️'
+                        : '❌'
+                    } 
+                    Verdict: ${verdict.toUpperCase()}
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>${results.verification.exifScore}</h3>
+                        <p>EXIF Score</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${results.verification.confidence}</h3>
+                        <p>Confidence</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${(results.fileSize / 1024).toFixed(1)}KB</h3>
+                        <p>File Size</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${results.metadataExtracted ? '✅' : '❌'}</h3>
+                        <p>EXIF Data</p>
+                    </div>
+                </div>
+
+                <h4>🔐 Hash Information</h4>
+                <p><strong>Algorithm:</strong> ${results.hash.algorithm}</p>
+                <p><strong>Digest:</strong> ${results.hash.digest.substring(
+                  0,
+                  32
+                )}...</p>
+                <p><strong>Timestamp:</strong> ${results.hash.timestamp}</p>
+
+                <h4>📋 Metadata</h4>
+                <p><strong>Device:</strong> ${
+                  results.metadata.deviceMake || 'Unknown'
+                } ${results.metadata.deviceModel || ''}</p>
+                <p><strong>Extracted:</strong> ${
+                  results.metadataExtracted ? 'Yes' : 'No'
+                }</p>
+
+                <h4>⛓️ Blockchain</h4>
+                <p><strong>Chain ID:</strong> ${results.blockchain.chainId}</p>
+                <p><strong>Signer:</strong> ${results.blockchain.signerId}</p>
+                <p><strong>Signature:</strong> ${results.blockchain.signature.substring(
+                  0,
+                  32
+                )}...</p>
+
+                <h4>🔒 Encryption</h4>
+                <p><strong>Algorithm:</strong> ${
+                  results.encryption.algorithm
+                }</p>
+                <p><strong>Status:</strong> ${
+                  results.encryption.encrypted ? '✅ Encrypted' : '❌ Failed'
+                }</p>
+            `;
+
+        section.style.display = 'block';
+      }
+
+      function displayDemoResults(result) {
+        const section = document.getElementById('resultsSection');
+        const container = document.getElementById('processingResults');
+
+        container.innerHTML = `
+                <div class="status success">✅ ${result.message}</div>
+                <p>Demo completed using real VeriLens SDK components on the backend.</p>
+                <p><strong>Certificate generated:</strong> ${result.certificate.generatedAt}</p>
+            `;
+
+        section.style.display = 'block';
+      }
+
+      function displayCertificate(certificate) {
+        const section = document.getElementById('certificateSection');
+        const container = document.getElementById('certificateResult');
+
+        const verdict = certificate.verification.verdict;
+        const verdictClass =
+          verdict === 'pass'
+            ? 'success'
+            : verdict === 'review'
+            ? 'warning'
+            : 'error';
+
+        container.innerHTML = `
+                <div class="status ${verdictClass}">
+                    ${
+                      verdict === 'pass'
+                        ? '🏆'
+                        : verdict === 'review'
+                        ? '⚠️'
+                        : '❌'
+                    } 
+                    Authenticity Certificate Generated
+                </div>
+                <pre>${JSON.stringify(certificate, null, 2)}</pre>
+                <button class="btn" onclick="downloadCertificate('${JSON.stringify(
+                  certificate
+                ).replace(/'/g, "\\'")}')">
+                    💾 Download Certificate
+                </button>
+                <button class="btn btn-info" onclick="copyCertificate('${JSON.stringify(
+                  certificate
+                ).replace(/'/g, "\\'")}')">
+                    📋 Copy to Clipboard
+                </button>
+            `;
+
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function displayError(message) {
+        const section = document.getElementById('resultsSection');
+        const container = document.getElementById('processingResults');
+
+        container.innerHTML = `<div class="status error">❌ ${message}</div>`;
+        section.style.display = 'block';
+      }
+
+      function clearResults() {
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('certificateSection').style.display = 'none';
+      }
+
+      function showLoading(show) {
+        const processBtn = document.getElementById('processBtn');
+        const demoBtn = document.getElementById('demoBtn');
+
+        if (show) {
+          processBtn.innerHTML = '<div class="loading"></div>Processing...';
+          demoBtn.innerHTML = '<div class="loading"></div>Running Demo...';
+          processBtn.disabled = true;
+          demoBtn.disabled = true;
+        } else {
+          processBtn.innerHTML = '🚀 Process with Real VeriLens SDK';
+          demoBtn.innerHTML = '🎬 Run Backend Demo';
+          updateButtonStates();
+        }
+      }
+
+      function downloadCertificate(certificateJson) {
+        const blob = new Blob([certificateJson], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `verilens-certificate-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function copyCertificate(certificateJson) {
+        navigator.clipboard
+          .writeText(certificateJson)
+          .then(() => {
+            alert('Certificate copied to clipboard!');
+          })
+          .catch((err) => {
+            console.error('Failed to copy: ', err);
+            alert('Failed to copy certificate');
+          });
+      }
+    </script>
+  </body>
+</html>
