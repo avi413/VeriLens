@@ -5,7 +5,11 @@ import { CapturedImage, MetadataRecord } from '../types';
  * Provides metadata enrichment, aggregation, and validation for captured artifacts.
  */
 export class MetadataService implements IMetadataExtractor {
-  constructor(private readonly delegates: IMetadataExtractor[] = []) {}
+  constructor(private delegates: IMetadataExtractor[] = []) {}
+
+  registerExtractor(extractor: IMetadataExtractor): void {
+    this.delegates.push(extractor);
+  }
 
   async extractMetadata(image: CapturedImage): Promise<MetadataRecord> {
     // TODO: Execute delegates in sequence and merge their outputs.

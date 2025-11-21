@@ -1,6 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ConfigLoaderOptions, DeepPartial, SdkConfig } from '../types';
+import {
+  ConfigLoaderOptions,
+  DeepPartial,
+  MetadataRecord,
+  SdkConfig,
+} from '../types';
 import { assertValidSdkConfig, isRecord } from './validators';
 import { normalizeError } from './errorNormalizer';
 import SdkLogger from './logger';
@@ -20,7 +25,7 @@ export function loadSdkConfig(
 ): SdkConfig {
   const env = options.env ?? process.env.VERILENS_ENV ?? 'development';
   const searchPaths = options.searchPaths ?? DEFAULT_SEARCH_PATHS;
-  const candidates = [`${env}.json`, 'default.json'];
+  const candidates = ['default.json', `${env}.json`];
 
   let config: DeepPartial<SdkConfig> = {};
 
@@ -41,10 +46,9 @@ export function loadSdkConfig(
 
         config = deepMerge(config, parsed as DeepPartial<SdkConfig>);
       } catch (error) {
-        logger.error(
-          `Failed to parse config file ${absolutePath}`,
-          normalizeError(error, { fileName: absolutePath })
-        );
+        logger.error(`Failed to parse config file ${absolutePath}`, {
+          error: normalizeError(error, { fileName: absolutePath }),
+        } satisfies MetadataRecord);
       }
     }
   }
@@ -66,16 +70,20 @@ function deepMerge<T extends Record<string, unknown>>(
   source: DeepPartial<T>
 ): DeepPartial<T> {
   const output: DeepPartial<T> = { ...target };
+
   Object.entries(source).forEach(([key, value]) => {
-    if (isRecord(value) && isRecord(output[key as keyof T])) {
-      output[key as keyof T] = deepMerge(
-        output[key as keyof T] as DeepPartial<T>,
-        value as DeepPartial<T>
-      );
-    } else {
-      output[key as keyof T] = value as DeepPartial<T[keyof T]>;
-    }
+    const existing = output[key as keyof T];
+    const targetRef = output as unknown as Record<string, unknown>;
+
+    targetRef[key] =
+      isRecord(existing) && isRecord(value)
+        ? deepMerge(
+            existing as DeepPartial<Record<string, unknown>>,
+            value as DeepPartial<Record<string, unknown>>
+          )
+        : value;
   });
+
   return output;
 }
 

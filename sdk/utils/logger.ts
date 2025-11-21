@@ -56,8 +56,10 @@ export class SdkLogger {
     }
 
     // TODO: Replace console usage with pluggable transports in production builds.
+    const consoleMethod: 'log' | 'info' | 'warn' | 'error' =
+      level === 'debug' || level === 'silent' ? 'log' : level;
     // eslint-disable-next-line no-console
-    console[level === 'debug' ? 'log' : level](`${prefix} ${message}`, context ?? '');
+    console[consoleMethod](`${prefix} ${message}`, context ?? '');
   }
 
   private shouldLog(level: Exclude<LoggerConfig['level'], undefined>): boolean {

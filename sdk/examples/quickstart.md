@@ -12,28 +12,26 @@ npm install verilens-sdk # placeholder until published
 
 ```ts
 import {
-  ImageCaptureManager,
-  MetadataService,
-  CryptoHashService,
-  BlockchainClient,
-  VerificationEngine,
-} from '@verilens/sdk/core';
+  VeriLensSdk,
+  NodeFileImageCapture,
+  ExifMetadataExtractor,
+  LocalBlockchainSigner,
+} from '@verilens/sdk';
 
-const captureManager = new ImageCaptureManager();
-const metadataService = new MetadataService();
-const hashService = new CryptoHashService('sha256');
-const blockchainClient = new BlockchainClient({ supportedChains: ['verilens-testnet'] });
-const verificationEngine = new VerificationEngine();
+const sdk = new VeriLensSdk({
+  captureDriver: new NodeFileImageCapture({ defaultSourceUri: './fixtures/sample.jpg' }),
+  metadataExtractors: [new ExifMetadataExtractor()],
+  blockchainSigner: new LocalBlockchainSigner({ chainId: 'verilens-testnet' }),
+});
 ```
 
 ## 3. Register verification stages
 
 ```ts
-verificationEngine.registerStage({
+sdk.registerStage({
   id: 'hash-integrity',
   description: 'Ensure captured bytes match expected digest.',
-  async execute({ image, expectedHash }) {
-    // TODO: inject hash service via stage context
+  async execute({ expectedHash }) {
     return {
       stageId: 'hash-integrity',
       success: Boolean(expectedHash && expectedHash.length > 0),
@@ -46,12 +44,12 @@ verificationEngine.registerStage({
 ## 4. Capture, hash, sign, and verify
 
 ```ts
-await captureManager.initialize();
-const capture = await captureManager.captureImage({ resolution: '1920x1080' });
-const metadata = await metadataService.extractMetadata(capture);
-const hash = await hashService.hashPayload(capture.bytes ?? capture.uri);
-const signature = await blockchainClient.signPayload(hash.digest, 'verilens-testnet');
-const verification = await verificationEngine.runVerification({
+await sdk.initializeCapture();
+const capture = await sdk.captureManager.captureImage({ resolution: '1920x1080' });
+const metadata = await sdk.metadataService.extractMetadata(capture);
+const hash = await sdk.hashService.hashPayload(capture.bytes ?? capture.uri);
+const signature = await sdk.blockchainClient.signPayload(hash.digest, 'verilens-testnet');
+const verification = await sdk.runVerification({
   image: capture,
   metadata,
   expectedHash: hash.digest,
@@ -67,5 +65,5 @@ console.log('Signature', signature);
 console.log('Verification report', verification);
 ```
 
-> **Note:** All core services currently contain TODOs and throw placeholders. The quickstart demonstrates the intended wiring for future concrete adapters.
+> **Note:** The sample uses the Node file capture adapter and local blockchain signer so you can exercise the pipeline without hardware dependencies. Swap in production adapters per platform when available.
 

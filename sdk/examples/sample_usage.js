@@ -4,23 +4,26 @@
  * This example demonstrates how the VeriLens SDK components could be composed in a Node runtime.
  * Replace relative imports with the published package name once available.
  */
-const { ImageCaptureManager } = require('../core/ImageCaptureManager');
-const { MetadataService } = require('../core/MetadataService');
-const { CryptoHashService } = require('../core/CryptoHashService');
-const { BlockchainClient } = require('../core/BlockchainClient');
-const { VerificationEngine } = require('../core/VerificationEngine');
+const {
+  VeriLensSdk,
+  NodeFileImageCapture,
+  ExifMetadataExtractor,
+  LocalBlockchainSigner,
+} = require('..');
 
 async function run() {
-  const captureManager = new ImageCaptureManager();
-  const metadataService = new MetadataService();
-  const hashService = new CryptoHashService('sha256');
-  const blockchainClient = new BlockchainClient({
-    supportedChains: ['verilens-testnet'],
-    defaultSignerId: 'demo-signer',
+  const sdk = new VeriLensSdk({
+    captureDriver: new NodeFileImageCapture({
+      defaultSourceUri: process.env.VERILENS_SAMPLE_IMAGE ?? './fixtures/sample.jpg',
+    }),
+    metadataExtractors: [new ExifMetadataExtractor()],
+    blockchainSigner: new LocalBlockchainSigner({
+      chainId: 'verilens-testnet',
+      signerId: 'demo-signer',
+    }),
   });
-  const verificationEngine = new VerificationEngine();
 
-  verificationEngine.registerStage({
+  sdk.registerStage({
     id: 'placeholder-stage',
     description: 'Demonstrate stage registration with minimal logic.',
     async execute() {
@@ -33,22 +36,22 @@ async function run() {
     },
   });
 
-  await captureManager.initialize({ camera: 'rear' });
-  const capture = await captureManager.captureImage({ resolution: '1080x1080' });
-  const metadata = await metadataService.extractMetadata(capture);
-  const hash = await hashService.hashPayload(capture.bytes ?? capture.uri);
+  await sdk.initializeCapture({ camera: 'rear' });
+  const capture = await sdk.captureManager.captureImage({ resolution: '1080x1080' });
+  const metadata = await sdk.metadataService.extractMetadata(capture);
+  const hash = await sdk.hashService.hashPayload(capture.bytes ?? capture.uri);
 
   console.log('Metadata snapshot:', metadata);
   console.log('Hash digest:', hash);
 
   try {
-    const signed = await blockchainClient.signPayload(hash.digest, 'verilens-testnet');
+    const signed = await sdk.blockchainClient.signPayload(hash.digest, 'verilens-testnet');
     console.log('Signature:', signed);
   } catch (error) {
     console.warn('Signing skipped in placeholder implementation:', error.message);
   }
 
-  const report = await verificationEngine.runVerification({
+  const report = await sdk.runVerification({
     image: capture,
     metadata,
     expectedHash: hash.digest,

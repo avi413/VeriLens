@@ -13,7 +13,15 @@ export interface CaptureOptions {
   includeMetadata?: boolean;
   timeoutMs?: number;
   enablePreview?: boolean;
+  /**
+   * Optional URI or file system path indicating preferred capture source.
+   */
+  sourceUri?: string;
+  /**
+   * Arbitrary metadata hints forwarded to adapters.
+   */
   metadataHints?: Record<string, unknown>;
+  captureMode?: 'single' | 'burst';
 }
 
 export interface CapturedImage {
