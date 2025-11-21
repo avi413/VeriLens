@@ -20,13 +20,13 @@ export class VerificationEngine implements IVerificationPipeline {
 
   async runVerification(input: VerificationInput): Promise<VerificationResult> {
     // TODO: Add tracing, cancellation tokens, and parallel stage support.
-    this.latestResults = [];
+    const runResults: VerificationStageResult[] = [];
 
     for (const stage of this.stages) {
       const startedAt = Date.now();
       try {
         const result = await stage.execute(input);
-        this.latestResults.push({
+        runResults.push({
           ...result,
           durationMs: result.durationMs ?? Date.now() - startedAt,
         });
@@ -35,7 +35,7 @@ export class VerificationEngine implements IVerificationPipeline {
           break;
         }
       } catch (error) {
-        this.latestResults.push({
+        runResults.push({
           stageId: stage.id,
           success: false,
           summary: 'Stage execution failed',
@@ -49,9 +49,11 @@ export class VerificationEngine implements IVerificationPipeline {
       }
     }
 
+    this.latestResults = runResults;
+
     return {
-      success: this.latestResults.every((result) => result.success),
-      stages: this.latestResults,
+      success: runResults.every((result) => result.success),
+      stages: runResults,
       generatedAt: new Date(),
     };
   }
