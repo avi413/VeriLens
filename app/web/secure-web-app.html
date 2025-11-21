@@ -273,6 +273,11 @@
         margin: 10px 0;
       }
 
+        .hash-input.highlight {
+          border-color: #17a2b8;
+          box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.2);
+        }
+
       @media (max-width: 768px) {
         .container {
           margin: 10px;
@@ -376,23 +381,255 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
-      @media (max-width: 768px) {
-        .result-header {
-          flex-direction: column;
-          align-items: stretch;
+        @media (max-width: 768px) {
+          .result-header {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .action-buttons {
+            margin-top: 15px;
+            justify-content: center;
+          }
+
+          .trust-score-section {
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+          }
         }
 
-        .action-buttons {
-          margin-top: 15px;
-          justify-content: center;
+        /* Pipeline & Data Explorer */
+        .process-section,
+        .data-section,
+        .verification-section {
+          margin-top: 40px;
         }
 
-        .trust-score-section {
-          flex-direction: column;
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          flex-wrap: wrap;
           gap: 10px;
-          text-align: center;
+          margin-bottom: 15px;
         }
-      }
+
+        .section-header p {
+          color: #6c757d;
+          font-size: 0.95rem;
+        }
+
+        .pipeline-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 15px;
+        }
+
+        .pipeline-card {
+          border-radius: 12px;
+          padding: 15px;
+          border: 1px solid #e9ecef;
+          background: #fff;
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+          transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .pipeline-card:hover {
+          transform: translateY(-2px);
+        }
+
+        .pipeline-icon {
+          font-size: 1.8rem;
+          margin-bottom: 8px;
+        }
+
+        .pipeline-title {
+          font-weight: 600;
+          margin-bottom: 6px;
+          color: #2c3e50;
+        }
+
+        .pipeline-status {
+          font-size: 0.85rem;
+          color: #6c757d;
+        }
+
+        .pipeline-card.pending {
+          border-color: #e9ecef;
+        }
+        .pipeline-card.running {
+          border-color: #17a2b8;
+          background: #e8f7fb;
+        }
+        .pipeline-card.success {
+          border-color: #28a745;
+          background: #e9f7ef;
+        }
+        .pipeline-card.warning {
+          border-color: #ffc107;
+          background: #fff8e1;
+        }
+        .pipeline-card.error {
+          border-color: #dc3545;
+          background: #ffe8ec;
+        }
+
+        .data-section {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 20px;
+        }
+
+        .data-card {
+          background: #fff;
+          border-radius: 15px;
+          padding: 20px;
+          border: 1px solid #e9ecef;
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .data-card h3 {
+          margin-bottom: 8px;
+          color: #2c3e50;
+        }
+
+        .data-card .subtext {
+          color: #6c757d;
+          font-size: 0.9rem;
+          margin-bottom: 15px;
+        }
+
+        .json-viewer {
+          background: #0b1021;
+          color: #7fffd4;
+          font-family: 'Courier New', monospace;
+          padding: 15px;
+          border-radius: 10px;
+          max-height: 260px;
+          overflow: auto;
+          font-size: 0.85rem;
+        }
+
+        .history-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          max-height: 260px;
+          overflow-y: auto;
+        }
+
+        .history-item {
+          border: 1px solid #e9ecef;
+          border-radius: 10px;
+          padding: 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .history-meta {
+          font-size: 0.8rem;
+          color: #6c757d;
+        }
+
+        .hash-snippet {
+          font-family: 'Courier New', monospace;
+          font-size: 0.75rem;
+          word-break: break-all;
+          color: #495057;
+        }
+
+        .history-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .chip-btn {
+          background: #f1f3f5;
+          border: none;
+          border-radius: 999px;
+          padding: 6px 14px;
+          font-size: 0.8rem;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .chip-btn:hover {
+          background: #e2e6ea;
+        }
+
+        .empty-state {
+          text-align: center;
+          color: #6c757d;
+          font-size: 0.9rem;
+          padding: 30px 10px;
+          border: 1px dashed #dee2e6;
+          border-radius: 10px;
+        }
+
+        .lab-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+
+        .lab-card {
+          background: white;
+          border-radius: 12px;
+          border: 1px solid #e9ecef;
+          padding: 20px;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .lab-card h3 {
+          margin-bottom: 10px;
+        }
+
+        .drop-zone {
+          border: 2px dashed #6c5ce7;
+          border-radius: 12px;
+          padding: 30px;
+          text-align: center;
+          color: #6c5ce7;
+          background: #f5f0ff;
+          transition: all 0.2s ease;
+          cursor: pointer;
+        }
+
+        .drop-zone.dragover {
+          background: #eae2ff;
+          border-color: #4c3fb4;
+        }
+
+        .hash-preview {
+          margin: 15px 0;
+        }
+
+        .hash-preview label {
+          font-size: 0.85rem;
+          color: #6c757d;
+        }
+
+        .lab-note {
+          font-size: 0.85rem;
+          color: #6c757d;
+          margin-top: 10px;
+        }
+
+        .badge-soft {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #f1f3f5;
+          border-radius: 999px;
+          padding: 4px 10px;
+          font-size: 0.8rem;
+          color: #495057;
+        }
     </style>
   </head>
   <body>
@@ -460,24 +697,100 @@
           <div id="captureResults"></div>
         </section>
 
+          <section class="process-section">
+            <div class="section-header">
+              <h2>🧬 Secure Processing Pipeline</h2>
+              <p>Live view of each SDK step as you capture and verify media.</p>
+            </div>
+            <div id="pipelineGrid" class="pipeline-grid"></div>
+          </section>
+
+          <section class="data-section">
+            <div class="data-card">
+              <h3>📦 Capture Payload</h3>
+              <p class="subtext">
+                Everything the SDK produced for the most recent secure capture.
+              </p>
+              <pre id="payloadViewer" class="json-viewer">{ "status": "awaiting secure capture" }</pre>
+            </div>
+            <div class="data-card">
+              <h3>🗂 Capture History</h3>
+              <p class="subtext">
+                Reuse hashes from recent captures to prove authenticity on demand.
+              </p>
+              <div id="captureHistoryList" class="history-list">
+                <div class="empty-state">
+                  Capture a photo to build a verifiable audit trail.
+                </div>
+              </div>
+            </div>
+          </section>
+
         <!-- Verification Section -->
         <section class="verification-section">
           <h2>🔍 Verify Image Hash</h2>
-          <p>
-            Enter an image hash to verify its authenticity on the blockchain:
-          </p>
-          <input
-            type="text"
-            id="hashInput"
-            class="hash-input"
-            placeholder="Enter SHA-256 hash (64 characters)..."
-            maxlength="64"
-          />
-          <div class="controls">
-            <button class="btn btn-primary" onclick="verifyImageHash()">
-              🔍 Verify Hash
-            </button>
-          </div>
+            <p>
+              Capture above or drop any photo below to see how VeriLens hashes,
+              anchors, and verifies authenticity.
+            </p>
+            <div class="lab-grid">
+              <div class="lab-card">
+                <h3>Drop a Photo or Click to Upload</h3>
+                <div id="hashDropZone" class="drop-zone">
+                  <div class="badge-soft">📁 Drag & Drop</div>
+                  <div style="margin-top: 10px">
+                    We'll compute its SHA-256 fingerprint instantly.
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="hashFileInput"
+                  accept="image/*"
+                  style="display: none"
+                />
+                <div class="hash-preview">
+                  <label>Computed Hash</label>
+                  <div id="dropZoneHash" class="hash-value">
+                    Waiting for an image...
+                  </div>
+                </div>
+                <button
+                  id="verifyDropButton"
+                  class="btn btn-success"
+                  onclick="verifyDroppedImage()"
+                  disabled
+                >
+                  ✅ Verify This Photo
+                </button>
+                <p class="lab-note">
+                  We'll also autofill the hash in the manual input so you can
+                  share it or run different policies.
+                </p>
+              </div>
+              <div class="lab-card">
+                <h3>Paste a Known Hash</h3>
+                <p class="subtext">
+                  Got a hash from blockchain, metadata, or a previous capture?
+                  Drop it here.
+                </p>
+                <input
+                  type="text"
+                  id="hashInput"
+                  class="hash-input"
+                  placeholder="Enter SHA-256 hash (64 characters)..."
+                  maxlength="64"
+                />
+                <div class="controls">
+                  <button class="btn btn-primary" onclick="verifyImageHash()">
+                    🔍 Verify Hash
+                  </button>
+                </div>
+                <p class="lab-note">
+                  Tip: capturing a photo above automatically fills this field
+                  with its trusted fingerprint.
+                </p>
+              </div>
+            </div>
           <div id="verificationResults" style="display: none"></div>
         </section>
       </main>
@@ -495,9 +808,22 @@
     <script src="/verilens-webapp.js"></script>
 
     <script>
-      // VeriLens Secure WebApp using Clean SDK Architecture
-      let veriLensApp = null;
-      let sdkStatus = null;
+        // VeriLens Secure WebApp using Clean SDK Architecture
+        let veriLensApp = null;
+        let sdkStatus = null;
+        const pipelineStages = [
+          { id: 'sdk', title: 'SDK & Security Stack', icon: '🧠' },
+          { id: 'camera', title: 'Secure Camera', icon: '📷' },
+          { id: 'capture', title: 'Live Capture', icon: '🎯' },
+          { id: 'hash', title: 'Cryptographic Hash', icon: '🔐' },
+          { id: 'attestation', title: 'Hardware Attestation', icon: '🛰️' },
+          { id: 'blockchain', title: 'Blockchain Anchor', icon: '⛓️' },
+          { id: 'verification', title: 'Policy & Trust', icon: '📊' },
+        ];
+        const pipelineState = {};
+        const captureHistory = [];
+        let droppedFileHash = null;
+        let droppedFileName = null;
 
       // Wait for all scripts to load with better error handling
       function waitForScripts() {
@@ -548,11 +874,68 @@
         });
       }
 
+        function initializePipeline() {
+          pipelineStages.forEach((stage) => {
+            pipelineState[stage.id] = {
+              status: 'pending',
+              detail: 'Waiting to start',
+              updatedAt: null,
+            };
+          });
+          renderPipeline();
+          renderCaptureHistory();
+          updatePayloadViewer(null);
+        }
+
+        function renderPipeline() {
+          const grid = document.getElementById('pipelineGrid');
+          if (!grid) return;
+
+          const cards = pipelineStages
+            .map((stage) => {
+              const state = pipelineState[stage.id] || {
+                status: 'pending',
+                detail: 'Waiting to start',
+              };
+              return `
+                <div class="pipeline-card ${state.status || 'pending'}">
+                  <div class="pipeline-icon">${stage.icon}</div>
+                  <div class="pipeline-title">${stage.title}</div>
+                  <div class="pipeline-status">${
+                    state.detail || 'Waiting to start'
+                  }</div>
+                </div>
+              `;
+            })
+            .join('');
+
+          grid.innerHTML = cards;
+        }
+
+        function updatePipelineStage(stageId, status = 'pending', detail = '') {
+          if (!pipelineState[stageId]) {
+            pipelineState[stageId] = {};
+          }
+
+          pipelineState[stageId] = {
+            status,
+            detail,
+            updatedAt: new Date().toISOString(),
+          };
+
+          renderPipeline();
+        }
+
       // Initialize the application
       async function initializeApp() {
         try {
           updateStatus('🔄 Loading VeriLens SDK...', 'info');
           console.log('[INFO] 🔄 Loading VeriLens SDK...');
+            updatePipelineStage(
+              'sdk',
+              'running',
+              'Loading security services & SDK modules...'
+            );
 
           // Wait for SDK scripts to load
           await waitForScripts();
@@ -585,6 +968,16 @@
             '✅ VeriLens SDK Ready - All Security Services Active',
             'success'
           );
+            updatePipelineStage(
+              'sdk',
+              'success',
+              'SDK ready with anti-tampering, sensors, and attestation'
+            );
+            updatePipelineStage(
+              'camera',
+              'pending',
+              'Click "Start Secure Camera" to open the trusted preview'
+            );
 
           // Get initial status
           sdkStatus = veriLensApp.getStatus();
@@ -595,6 +988,11 @@
             `❌ SDK Initialization Failed: ${error.message}`,
             'error'
           );
+            updatePipelineStage(
+              'sdk',
+              'error',
+              error.message || 'Initialization failure'
+            );
         }
       }
 
@@ -608,6 +1006,11 @@
         try {
           updateStatus('📹 Starting secure camera...', 'info');
           updateCameraOverlay('🔄 Initializing secure capture...');
+              updatePipelineStage(
+                'camera',
+                'running',
+                'Negotiating secure media stream with browser hardware'
+              );
 
           // Use SDK's secure camera method
           await veriLensApp.startCamera();
@@ -617,6 +1020,11 @@
             'success'
           );
           updateCameraOverlay('✅ Secure Camera Active');
+              updatePipelineStage(
+                'camera',
+                'success',
+                'Secure preview active with liveness protections'
+              );
 
           // Enable capture button
           document.getElementById('capturePhoto').disabled = false;
@@ -624,6 +1032,11 @@
           console.error('❌ Camera start failed:', error);
           updateStatus(`❌ Secure camera failed: ${error.message}`, 'error');
           updateCameraOverlay('❌ Camera Error');
+              updatePipelineStage(
+                'camera',
+                'error',
+                error.message || 'Camera initialization failed'
+              );
         }
       }
 
@@ -637,12 +1050,74 @@
         try {
           updateStatus('📸 Capturing secure photo with validation...', 'info');
           updateCameraOverlay('📸 Capturing with security validation...');
+              updatePipelineStage(
+                'capture',
+                'running',
+                'Sensor fusion, live-motion, and anti-tampering in progress'
+              );
+              updatePipelineStage('hash', 'pending', 'Awaiting secure digest...');
+              updatePipelineStage(
+                'attestation',
+                'pending',
+                'Collecting device fingerprint and biometrics'
+              );
+              updatePipelineStage(
+                'blockchain',
+                'pending',
+                'Preparing immutable anchor transaction'
+              );
+              updatePipelineStage(
+                'verification',
+                'pending',
+                'Trust policy will update once hashing completes'
+              );
 
           // Use SDK's secure capture method (handles all security internally)
           const result = await veriLensApp.capturePhoto();
 
           if (result.success) {
             displayCaptureResults(result);
+                const shortHash = result.image?.hash
+                  ? `${result.image.hash.substring(0, 12)}…`
+                  : 'Unavailable';
+                updatePipelineStage(
+                  'capture',
+                  'success',
+                  'Frame secured with sensor + liveness checks'
+                );
+                updatePipelineStage(
+                  'hash',
+                  'success',
+                  `SHA-256 ${shortHash}`
+                );
+                const attestationState = result.verification?.deviceAttestation
+                  ? 'success'
+                  : 'warning';
+                updatePipelineStage(
+                  'attestation',
+                  attestationState,
+                  result.verification?.deviceAttestation
+                    ? 'Device fingerprint + biometrics captured'
+                    : 'Development fallback attestation'
+                );
+                const blockchainState = result.blockchain?.verified
+                  ? 'success'
+                  : 'warning';
+                updatePipelineStage(
+                  'blockchain',
+                  blockchainState,
+                  result.blockchain?.verified
+                    ? `Txn ${result.blockchain?.transactionHash?.substring(0, 10)}…`
+                    : 'Local fallback (offline or disabled)'
+                );
+                updatePipelineStage(
+                  'verification',
+                  'success',
+                  `Trust score ${result.verification?.trustScore || 0}/100`
+                );
+                updatePayloadViewer(result);
+                addCaptureHistoryEntry(result);
+                prefillHash(result.image?.hash);
             updateStatus(
               `✅ Photo captured with trust score: ${result.verification?.trustScore}/100`,
               'success'
@@ -651,18 +1126,68 @@
           } else {
             updateStatus(`❌ Capture failed: ${result.error}`, 'error');
             updateCameraOverlay('❌ Capture failed');
+                updatePipelineStage(
+                  'capture',
+                  'error',
+                  result.error || 'Capture failed'
+                );
+                updatePipelineStage(
+                  'hash',
+                  'warning',
+                  'Hash skipped due to capture failure'
+                );
+                updatePipelineStage(
+                  'attestation',
+                  'warning',
+                  'Skipped because capture failed'
+                );
+                updatePipelineStage(
+                  'blockchain',
+                  'warning',
+                  'Not submitted - capture did not succeed'
+                );
+                updatePipelineStage(
+                  'verification',
+                  'warning',
+                  'No capture to score'
+                );
           }
         } catch (error) {
           console.error('❌ Secure capture failed:', error);
           updateStatus(`❌ Capture error: ${error.message}`, 'error');
           updateCameraOverlay('❌ Capture error');
+              updatePipelineStage(
+                'capture',
+                'error',
+                error.message || 'Capture error'
+              );
+              updatePipelineStage(
+                'hash',
+                'warning',
+                'Hash aborted because capture errored'
+              );
+              updatePipelineStage(
+                'attestation',
+                'warning',
+                'Skipped due to capture error'
+              );
+              updatePipelineStage(
+                'blockchain',
+                'warning',
+                'Not submitted - capture failed'
+              );
+              updatePipelineStage(
+                'verification',
+                'warning',
+                'No capture to verify'
+              );
         }
       }
 
       // Verify image hash using SDK
-      async function verifyImageHash() {
-        const hashInput = document.getElementById('hashInput');
-        const hash = hashInput.value.trim();
+        async function verifyImageHash(hashOverride) {
+          const hashInput = document.getElementById('hashInput');
+          const hash = (hashOverride || hashInput?.value || '').trim();
 
         if (!hash || hash.length !== 64) {
           alert('Please enter a valid 64-character SHA-256 hash');
@@ -676,6 +1201,11 @@
 
         try {
           updateStatus('🔍 Verifying image hash...', 'info');
+            updatePipelineStage(
+              'verification',
+              'running',
+              'Cross-checking fingerprint with blockchain record'
+            );
 
           // Use SDK's verification method
           const result = await veriLensApp.verifyImage(hash);
@@ -687,15 +1217,30 @@
               `✅ Image verified with trust score: ${result.trustScore}/100`,
               'success'
             );
+                updatePipelineStage(
+                  'verification',
+                  'success',
+                  `Hash found on ${result.network} – trust ${result.trustScore}/100`
+                );
           } else {
             updateStatus(
               '❌ Image not found or verification failed',
               'warning'
             );
+                updatePipelineStage(
+                  'verification',
+                  'warning',
+                  'Hash not registered or policy failed'
+                );
           }
         } catch (error) {
           console.error('❌ Verification failed:', error);
           updateStatus(`❌ Verification error: ${error.message}`, 'error');
+              updatePipelineStage(
+                'verification',
+                'error',
+                error.message || 'Verification failed'
+              );
         }
       }
 
@@ -1038,6 +1583,215 @@
         verificationDiv.style.display = 'block';
       }
 
+        function updatePayloadViewer(result) {
+          const viewer = document.getElementById('payloadViewer');
+          if (!viewer) return;
+
+          if (!result) {
+            viewer.textContent = '{ "status": "awaiting secure capture" }';
+            return;
+          }
+
+          const payload = {
+            hash: result.image?.hash,
+            trustScore: result.verification?.trustScore,
+            blockchain: {
+              network: result.blockchain?.network,
+              transactionHash: result.blockchain?.transactionHash,
+              timestamp: result.blockchain?.timestamp,
+              verified: result.blockchain?.verified,
+            },
+            deviceAttestation: result.verification?.deviceAttestation,
+            security: result.security,
+          };
+
+          viewer.textContent = JSON.stringify(payload, null, 2);
+        }
+
+        function addCaptureHistoryEntry(result) {
+          if (!result?.image?.hash) return;
+
+          captureHistory.unshift({
+            hash: result.image.hash,
+            trustScore: result.verification?.trustScore ?? '--',
+            timestamp: new Date(),
+          });
+
+          if (captureHistory.length > 6) {
+            captureHistory.pop();
+          }
+
+          renderCaptureHistory();
+        }
+
+        function renderCaptureHistory() {
+          const list = document.getElementById('captureHistoryList');
+          if (!list) return;
+
+          if (!captureHistory.length) {
+            list.innerHTML = `
+              <div class="empty-state">
+                Capture a photo to build a verifiable audit trail.
+              </div>
+            `;
+            return;
+          }
+
+          list.innerHTML = captureHistory
+            .map(
+              (entry, index) => `
+                <div class="history-item">
+                  <div>
+                    <div class="pipeline-title">Capture #${captureHistory.length - index}</div>
+                    <div class="history-meta">
+                      ${entry.timestamp.toLocaleTimeString()} • Trust ${
+                        entry.trustScore ?? '—'
+                      }
+                    </div>
+                    <div class="hash-snippet">${entry.hash.substring(
+                      0,
+                      32
+                    )}...</div>
+                  </div>
+                  <div class="history-actions">
+                    <button class="chip-btn" onclick="prefillHash('${entry.hash}')">
+                      Use Hash
+                    </button>
+                    <button class="chip-btn" onclick="copyToClipboard('${entry.hash}', '📋 Hash copied from history')">
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              `
+            )
+            .join('');
+        }
+
+        function prefillHash(hash) {
+          if (!hash) return;
+          const hashInput = document.getElementById('hashInput');
+          if (hashInput) {
+            hashInput.value = hash;
+            hashInput.classList.add('highlight');
+            setTimeout(() => hashInput.classList.remove('highlight'), 1200);
+          }
+          updatePipelineStage(
+            'hash',
+            'success',
+            `SHA-256 ${hash.substring(0, 12)}…`
+          );
+        }
+
+        function setupDropZone() {
+          const dropZone = document.getElementById('hashDropZone');
+          const fileInput = document.getElementById('hashFileInput');
+          if (!dropZone || !fileInput) return;
+
+          const processFile = (file) => {
+            if (file) {
+              handleFileDrop(file);
+            }
+          };
+
+          dropZone.addEventListener('click', () => fileInput.click());
+
+          ['dragenter', 'dragover'].forEach((eventName) => {
+            dropZone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              dropZone.classList.add('dragover');
+            });
+          });
+
+          ['dragleave', 'drop'].forEach((eventName) => {
+            dropZone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              dropZone.classList.remove('dragover');
+            });
+          });
+
+          dropZone.addEventListener('drop', (event) => {
+            const file = event.dataTransfer?.files?.[0];
+            processFile(file);
+          });
+
+          fileInput.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            processFile(file);
+            event.target.value = '';
+          });
+        }
+
+        async function handleFileDrop(file) {
+          if (!file) return;
+
+          try {
+            droppedFileName = file.name;
+            const hashDisplay = document.getElementById('dropZoneHash');
+            if (hashDisplay) {
+              hashDisplay.textContent = 'Calculating SHA-256 hash...';
+            }
+            droppedFileHash = await computeFileHash(file);
+
+            if (hashDisplay) {
+              hashDisplay.textContent = droppedFileHash;
+            }
+
+          const verifyButton = document.getElementById('verifyDropButton');
+          if (verifyButton) {
+            verifyButton.disabled = false;
+          }
+            prefillHash(droppedFileHash);
+            updateStatus(
+              '🧮 Hash generated from uploaded photo – ready to verify',
+              'success'
+            );
+          } catch (error) {
+            console.error('Hash computation failed:', error);
+            updateStatus(
+              `❌ Failed to compute hash: ${error.message}`,
+              'error'
+            );
+          }
+        }
+
+        async function computeFileHash(file) {
+          const buffer = await file.arrayBuffer();
+          const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+          return Array.from(new Uint8Array(hashBuffer))
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('');
+        }
+
+        async function verifyDroppedImage() {
+          if (!droppedFileHash) {
+            alert('Please drop or select a photo first.');
+            return;
+          }
+          await verifyImageHash(droppedFileHash);
+        }
+
+        function copyToClipboard(text, successMessage = '📋 Hash copied to clipboard') {
+          if (!text) {
+            alert('No data to copy');
+            return;
+          }
+
+          navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              updateStatus(successMessage, 'success');
+            })
+            .catch(() => {
+              const textArea = document.createElement('textarea');
+              textArea.value = text;
+              document.body.appendChild(textArea);
+              textArea.select();
+              document.execCommand('copy');
+              document.body.removeChild(textArea);
+              updateStatus(successMessage, 'success');
+            });
+        }
+
       // Helper functions
       function updateStatus(message, type = 'info') {
         const statusDiv = document.getElementById('securityStatus');
@@ -1115,27 +1869,8 @@
       }
 
       function copyHash() {
-        const hash = currentCaptureResult?.image?.hash;
-        if (!hash) {
-          alert('No hash to copy');
-          return;
-        }
-
-        navigator.clipboard
-          .writeText(hash)
-          .then(() => {
-            updateStatus('📋 Hash copied to clipboard', 'success');
-          })
-          .catch(() => {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = hash;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            updateStatus('📋 Hash copied to clipboard', 'success');
-          });
+          const hash = currentCaptureResult?.image?.hash;
+          copyToClipboard(hash);
       }
 
       // Test verification function
@@ -1166,8 +1901,12 @@
         }
       }
 
-      // Initialize when page loads
-      document.addEventListener('DOMContentLoaded', initializeApp);
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+          initializePipeline();
+          setupDropZone();
+          initializeApp();
+        });
     </script>
   </body>
 </html>
