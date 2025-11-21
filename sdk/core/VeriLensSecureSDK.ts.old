@@ -1,0 +1,564 @@
+/**
+ * VeriLens SDK - Secure Photo Verification Core
+ * Complete SDK with integrated security architecture
+ */
+
+import { SecurityManager } from './SecurityManager';
+
+export interface VeriLensConfig {
+  // Security Configuration
+  security?: {
+    enableAntiTampering?: boolean;
+    enableHardwareAttestation?: boolean;
+    enableSensorValidation?: boolean;
+    enableBlockchainVerification?: boolean;
+    securityLevel?: 'basic' | 'enhanced' | 'maximum';
+  };
+
+  // Blockchain Configuration
+  blockchain?: {
+    network?: 'ethereum' | 'polygon' | 'local';
+    contractAddress?: string;
+    fallbackToLocal?: boolean;
+  };
+
+  // Camera Configuration
+  camera?: {
+    quality?: number;
+    frameValidation?: boolean;
+    motionDetection?: boolean;
+    liveProofRequired?: boolean;
+  };
+
+  // Device Configuration
+  device?: {
+    sensorCapture?: boolean;
+    biometricAuth?: boolean;
+    deviceFingerprinting?: boolean;
+  };
+}
+
+export interface CaptureResult {
+  success: boolean;
+  image?: {
+    blob: Blob;
+    dataUrl: string;
+    hash: string;
+    metadata: any;
+  };
+  verification?: {
+    trustScore: number;
+    securityLevel: string;
+    sensorData?: any;
+    liveProof?: any;
+    deviceAttestation?: any;
+  };
+  blockchain?: {
+    transactionHash: string;
+    network: string;
+    timestamp: string;
+    verified: boolean;
+  };
+  security?: {
+    tamperingDetected: boolean;
+    integrityPassed: boolean;
+    validationResults: any[];
+  };
+  error?: string;
+}
+
+export interface VerificationResult {
+  exists: boolean;
+  verified: boolean;
+  trustScore?: number;
+  timestamp?: string;
+  deviceId?: string;
+  submitter?: string;
+  network?: string;
+  securityChecks?: {
+    codeIntegrity: boolean;
+    deviceValidation: boolean;
+    sensorValidation: boolean;
+  };
+}
+
+/**
+ * VeriLens SDK - Main API Class
+ * Provides a unified interface for secure photo verification
+ */
+export class VeriLensSDK {
+  private config: VeriLensConfig;
+  private securityManager: SecurityManager;
+  private initialized: boolean = false;
+
+  constructor(config: VeriLensConfig = {}) {
+    this.config = {
+      security: {
+        enableAntiTampering: true,
+        enableHardwareAttestation: true,
+        enableSensorValidation: true,
+        enableBlockchainVerification: true,
+        securityLevel: 'maximum',
+        ...config.security,
+      },
+      blockchain: {
+        network: 'polygon',
+        fallbackToLocal: true,
+        ...config.blockchain,
+      },
+      camera: {
+        quality: 0.98,
+        frameValidation: true,
+        motionDetection: true,
+        liveProofRequired: true,
+        ...config.camera,
+      },
+      device: {
+        sensorCapture: true,
+        biometricAuth: true,
+        deviceFingerprinting: true,
+        ...config.device,
+      },
+    };
+
+    this.securityManager = new SecurityManager();
+  }
+
+  /**
+   * Initialize the SDK with all security services
+   */
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      console.warn('VeriLens SDK already initialized');
+      return;
+    }
+
+    try {
+      console.log('🔧 Initializing VeriLens SDK...');
+
+      // Initialize security services based on configuration
+      await this.initializeSecurityServices();
+
+      // Perform initial security validation
+      await this.performSecurityValidation();
+
+      this.initialized = true;
+      console.log('✅ VeriLens SDK initialized successfully');
+    } catch (error) {
+      console.error('❌ SDK initialization failed:', error);
+      throw new Error(
+        `VeriLens SDK initialization failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
+  }
+
+  private async initializeSecurityServices(): Promise<void> {
+    console.log('🛡️ Initializing security services...');
+
+    // Anti-Tampering Service
+    if (this.config.security?.enableAntiTampering) {
+      this.services.antiTampering = new (window as any).AntiTamperingService();
+      console.log('✅ Anti-Tampering service initialized');
+    }
+
+    // Device Sensor Service
+    if (this.config.security?.enableSensorValidation) {
+      this.services.deviceSensor = new (window as any).DeviceSensorService();
+      console.log('✅ Device Sensor service initialized');
+    }
+
+    // Hardware Attestation Service
+    if (this.config.security?.enableHardwareAttestation) {
+      this.services.hardwareAttestation = new (
+        window as any
+      ).HardwareAttestationService();
+      console.log('✅ Hardware Attestation service initialized');
+    }
+
+    // Blockchain Service
+    if (this.config.security?.enableBlockchainVerification) {
+      this.services.blockchain = new (window as any).BlockchainService();
+      console.log('✅ Blockchain service initialized');
+    }
+
+    // Secure Camera API
+    this.services.secureCamera = new (window as any).SecureCameraAPI();
+    console.log('✅ Secure Camera API initialized');
+
+    // Wait for all services to be ready
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  private async performSecurityValidation(): Promise<void> {
+    console.log('🔍 Performing initial security validation...');
+
+    const validationResults = [];
+
+    // Validate anti-tampering
+    if (this.services.antiTampering) {
+      const integrityResult = this.services.antiTampering.verifyCodeIntegrity();
+      validationResults.push({
+        service: 'anti-tampering',
+        passed: integrityResult && integrityResult.passed,
+      });
+    }
+
+    // Validate hardware attestation
+    if (this.services.hardwareAttestation) {
+      const capabilities =
+        this.services.hardwareAttestation.getDeviceCapabilities();
+      validationResults.push({
+        service: 'hardware-attestation',
+        passed: capabilities && Object.keys(capabilities).length > 0,
+      });
+    }
+
+    // Validate blockchain connection
+    if (this.services.blockchain) {
+      const stats = await this.services.blockchain.getBlockchainStats();
+      validationResults.push({
+        service: 'blockchain',
+        passed: stats && stats.network,
+      });
+    }
+
+    const allPassed = validationResults.every((result) => result.passed);
+
+    if (!allPassed) {
+      const failedServices = validationResults
+        .filter((r) => !r.passed)
+        .map((r) => r.service);
+      console.warn(
+        '⚠️ Some security services failed validation:',
+        failedServices
+      );
+    } else {
+      console.log('✅ All security services validated successfully');
+    }
+  }
+
+  /**
+   * Start secure camera capture
+   */
+  async startCamera(
+    videoElement: HTMLVideoElement,
+    options: any = {}
+  ): Promise<void> {
+    this.ensureInitialized();
+
+    console.log('📸 Starting secure camera...');
+
+    const canvas = options.canvas || document.createElement('canvas');
+
+    const result = await this.services.secureCamera.startSecureCapture(
+      videoElement,
+      { canvas }
+    );
+
+    if (!result.success) {
+      throw new Error('Failed to start secure camera');
+    }
+
+    console.log(
+      '✅ Secure camera started with features:',
+      result.securityFeatures
+    );
+  }
+
+  /**
+   * Capture and verify a photo with full security validation
+   */
+  async capturePhoto(): Promise<CaptureResult> {
+    this.ensureInitialized();
+
+    try {
+      console.log('📸 Starting secure photo capture...');
+
+      // Step 1: Pre-capture security checks
+      const preSecurityCheck = await this.performPreCaptureSecurityCheck();
+      if (!preSecurityCheck.passed) {
+        return {
+          success: false,
+          error: `Security check failed: ${preSecurityCheck.reason}`,
+        };
+      }
+
+      // Step 2: Capture image with security validation
+      const captureResult =
+        await this.services.secureCamera.captureSecureImage();
+
+      if (!captureResult.success) {
+        return {
+          success: false,
+          error: 'Image capture failed',
+        };
+      }
+
+      // Step 3: Generate cryptographic hash
+      const imageHash = await this.generateSecureHash(captureResult.image.blob);
+
+      // Step 4: Collect device attestation
+      const deviceAttestation = await this.collectDeviceAttestation();
+
+      // Step 5: Generate verification data
+      const verification = {
+        trustScore: this.calculateTrustScore(captureResult, deviceAttestation),
+        securityLevel: this.config.security?.securityLevel || 'maximum',
+        sensorData: captureResult.sensorData,
+        liveProof: captureResult.liveProof,
+        deviceAttestation,
+      };
+
+      // Step 6: Submit to blockchain
+      const blockchainResult = await this.submitToBlockchain(
+        imageHash,
+        verification
+      );
+
+      // Step 7: Final security validation
+      const security = {
+        tamperingDetected:
+          this.services.antiTampering?.tamperingDetected || false,
+        integrityPassed: preSecurityCheck.passed,
+        validationResults: captureResult.validation,
+      };
+
+      console.log('✅ Secure photo capture completed successfully');
+
+      return {
+        success: true,
+        image: {
+          blob: captureResult.image.blob,
+          dataUrl: captureResult.image.dataUrl,
+          hash: imageHash,
+          metadata: captureResult.image,
+        },
+        verification,
+        blockchain: blockchainResult,
+        security,
+      };
+    } catch (error) {
+      console.error('❌ Photo capture failed:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Verify an existing image hash
+   */
+  async verifyImage(imageHash: string): Promise<VerificationResult> {
+    this.ensureInitialized();
+
+    try {
+      console.log(
+        '🔍 Verifying image hash:',
+        imageHash.substring(0, 16) + '...'
+      );
+
+      // Check blockchain record
+      const blockchainResult = await this.services.blockchain.verifyImageHash(
+        imageHash
+      );
+
+      // Perform additional security checks
+      const securityChecks = {
+        codeIntegrity:
+          this.services.antiTampering?.verifyCodeIntegrity()?.passed || false,
+        deviceValidation: !!this.services.hardwareAttestation,
+        sensorValidation: !!this.services.deviceSensor,
+      };
+
+      return {
+        exists: blockchainResult.exists,
+        verified: blockchainResult.verified,
+        trustScore: blockchainResult.trustScore,
+        timestamp: blockchainResult.timestamp,
+        deviceId: blockchainResult.deviceId,
+        submitter: blockchainResult.submitter,
+        network: blockchainResult.network,
+        securityChecks,
+      };
+    } catch (error) {
+      console.error('❌ Image verification failed:', error);
+      return {
+        exists: false,
+        verified: false,
+      };
+    }
+  }
+
+  /**
+   * Get SDK status and security metrics
+   */
+  getStatus(): any {
+    return {
+      initialized: this.initialized,
+      config: this.config,
+      security: {
+        antiTampering:
+          this.services.antiTampering?.getTamperingStatus?.() || null,
+        camera: this.services.secureCamera?.getSecurityStatus?.() || null,
+        blockchain: this.services.blockchain?.isConnected?.() || false,
+      },
+      services: Object.keys(this.services),
+    };
+  }
+
+  /**
+   * Stop all services and clean up
+   */
+  async destroy(): Promise<void> {
+    console.log('🛑 Destroying VeriLens SDK...');
+
+    if (this.services.secureCamera) {
+      this.services.secureCamera.stopSecureCapture();
+    }
+
+    this.services = {};
+    this.initialized = false;
+
+    console.log('✅ VeriLens SDK destroyed');
+  }
+
+  // Private helper methods
+
+  private ensureInitialized(): void {
+    if (!this.initialized) {
+      throw new Error('VeriLens SDK not initialized. Call initialize() first.');
+    }
+  }
+
+  private async performPreCaptureSecurityCheck(): Promise<{
+    passed: boolean;
+    reason?: string;
+  }> {
+    const checks = [];
+
+    // Anti-tampering check
+    if (this.services.antiTampering) {
+      const integrity = this.services.antiTampering.verifyCodeIntegrity();
+      checks.push({
+        name: 'code-integrity',
+        passed: integrity && integrity.passed,
+      });
+    }
+
+    // Camera security check
+    if (this.services.secureCamera) {
+      const cameraStatus = this.services.secureCamera.getSecurityStatus();
+      checks.push({
+        name: 'camera-security',
+        passed: cameraStatus && cameraStatus.active,
+      });
+    }
+
+    const failedChecks = checks.filter((check) => !check.passed);
+
+    return {
+      passed: failedChecks.length === 0,
+      reason:
+        failedChecks.length > 0
+          ? `Failed: ${failedChecks.map((c) => c.name).join(', ')}`
+          : undefined,
+    };
+  }
+
+  private async generateSecureHash(blob: Blob): Promise<string> {
+    const arrayBuffer = await blob.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  private async collectDeviceAttestation(): Promise<any> {
+    const attestation: any = {};
+
+    // Hardware attestation
+    if (this.services.hardwareAttestation) {
+      attestation.deviceFingerprint =
+        await this.services.hardwareAttestation.generateDeviceFingerprint();
+      attestation.biometricCapabilities =
+        await this.services.hardwareAttestation.detectBiometricCapabilities();
+    }
+
+    // Sensor data
+    if (this.services.deviceSensor) {
+      attestation.deviceSignature =
+        await this.services.deviceSensor.generateDeviceSignature();
+      attestation.sensorData = this.services.deviceSensor.getSensorStatus();
+    }
+
+    return attestation;
+  }
+
+  private calculateTrustScore(
+    captureResult: any,
+    deviceAttestation: any
+  ): number {
+    let score = 50; // Base score
+
+    // Camera security features
+    if (captureResult.validation?.overall) score += 20;
+    if (captureResult.sensorData?.success) score += 10;
+    if (captureResult.liveProof) score += 15;
+
+    // Device attestation
+    if (deviceAttestation.deviceFingerprint) score += 5;
+    if (deviceAttestation.biometricCapabilities?.available) score += 10;
+
+    // Security services
+    if (!this.services.antiTampering?.tamperingDetected) score += 10;
+
+    return Math.min(100, Math.max(0, score));
+  }
+
+  private async submitToBlockchain(
+    imageHash: string,
+    verification: any
+  ): Promise<any> {
+    if (
+      !this.services.blockchain ||
+      !this.config.security?.enableBlockchainVerification
+    ) {
+      return {
+        success: false,
+        network: 'disabled',
+        transactionHash: 'none',
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    try {
+      const deviceId =
+        verification.deviceAttestation?.deviceFingerprint?.substring(0, 16) ||
+        'unknown';
+
+      return await this.services.blockchain.submitImageHash(
+        imageHash,
+        { trustScore: verification.trustScore },
+        deviceId
+      );
+    } catch (error) {
+      console.error('Blockchain submission failed:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+        network: 'failed',
+        transactionHash: 'failed',
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+}
+
+// Export for global access (backward compatibility)
+if (typeof window !== 'undefined') {
+  (window as any).VeriLensSDK = VeriLensSDK;
+}
+
+export default VeriLensSDK;

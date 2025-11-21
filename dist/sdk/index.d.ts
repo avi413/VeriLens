@@ -1,37 +1,20 @@
-// Main SDK Export (NEW - Refactored Clean Architecture)
 export { VeriLensSDK } from './core/VeriLensRefactoredSDK';
 export { SecurityManager } from './core/SecurityManager';
-
-// Core Services
 export * from './core/ImageCaptureManager';
 export * from './core/MetadataService';
 export * from './core/CryptoHashService';
 export * from './core/BlockchainClient';
 export * from './core/VerificationEngine';
-
-// Interfaces
 export * from './interfaces/IImageCapture';
 export * from './interfaces/IMetadataExtractor';
 export * from './interfaces/ICryptoHasher';
 export * from './interfaces/IBlockchainSigner';
 export * from './interfaces/IVerificationPipeline';
-
-// Types (avoid conflict by importing specific types)
-export type {
-  HashAlgorithm,
-  HashEncoding,
-  CaptureOptions,
-  CapturedImage,
-  MetadataRecord,
-  HashResult,
-  SignatureResult,
-} from './types';
-
+export type { HashAlgorithm, HashEncoding, CaptureOptions, CapturedImage, MetadataRecord, HashResult, SignatureResult, } from './types';
 export * from './utils/errorNormalizer';
 export * from './utils/logger';
 export * from './utils/validators';
 export * from './utils/configLoader';
-
 export * from './adapters/capture/NodeFileImageCapture';
 export * from './adapters/metadata/ExifMetadataExtractor';
 export * from './adapters/blockchain/LocalBlockchainSigner';

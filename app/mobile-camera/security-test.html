@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriLens Security Integration Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .header {
+            text-align: center;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .test-container {
+            border: 1px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+        
+        .button {
+            background: #00aa00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+            font-family: inherit;
+        }
+        
+        .button:hover {
+            background: #00ff00;
+        }
+        
+        .button:disabled {
+            background: #666;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #output {
+            background: #000;
+            padding: 20px;
+            border: 1px solid #333;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 14px;
+            white-space: pre-wrap;
+            margin-top: 20px;
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .status.ready { background: rgba(0, 255, 0, 0.2); }
+        .status.running { background: rgba(255, 255, 0, 0.2); color: #ffff00; }
+        .status.success { background: rgba(0, 255, 0, 0.3); }
+        .status.error { background: rgba(255, 0, 0, 0.2); color: #ff0000; }
+        
+        .security-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .module {
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .module.loaded { border-color: #00ff00; }
+        .module.failed { border-color: #ff0000; color: #ff9999; }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00aa00, #00ff00);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ VeriLens Security Integration Test Suite</h1>
+        <p>Comprehensive testing of all 6 security modules</p>
+    </div>
+
+    <div class="test-container">
+        <h2>🔧 Security Module Status</h2>
+        <div class="security-modules" id="moduleStatus">
+            <!-- Modules will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🚀 Test Controls</h2>
+        <div style="text-align: center;">
+            <button class="button" onclick="checkModules()">Check Modules</button>
+            <button class="button" onclick="runQuickTest()">Quick Test</button>
+            <button class="button" onclick="runFullTest()" id="fullTestBtn">Full Integration Test</button>
+            <button class="button" onclick="clearOutput()">Clear Output</button>
+        </div>
+        
+        <div id="testStatus" class="status ready">
+            🟢 Ready to test - All systems loaded
+        </div>
+        
+        <div class="progress" style="display: none;" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 Test Output</h2>
+        <div id="output">VeriLens Security Integration Test Console
+═══════════════════════════════════════════════
+Initializing test environment...
+
+</div>
+    </div>
+
+    <!-- Load all security modules -->
+    <script src="anti-tampering.js"></script>
+    <script src="hardware-attestation.js"></script>
+    <script src="blockchain-service.js"></script>
+    <script src="device-sensor-service.js"></script>
+    <script src="secure-camera-api.js"></script>
+    <script src="secure-server.js"></script>
+    <script src="security-integration-test.js"></script>
+
+    <script>
+        let testRunner = null;
+        let currentTest = null;
+        
+        // Initialize test environment
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 VeriLens Security Test Suite Loaded');
+            log('📦 Checking security modules...');
+            setTimeout(checkModules, 1000);
+        });
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.textContent += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'ready') {
+            const status = document.getElementById('testStatus');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function updateProgress(percentage) {
+            const container = document.getElementById('progressContainer');
+            const bar = document.getElementById('progressBar');
+            
+            if (percentage > 0) {
+                container.style.display = 'block';
+                bar.style.width = percentage + '%';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+        
+        function checkModules() {
+            log('🔍 Checking security module availability...');
+            
+            const modules = [
+                { name: 'AntiTamperingService', class: window.AntiTamperingService, description: 'Code integrity & debugger detection' },
+                { name: 'HardwareAttestationService', class: window.HardwareAttestationService, description: 'WebAuthn & biometric security' },
+                { name: 'BlockchainService', class: window.BlockchainService, description: 'Ethereum/Polygon integration' },
+                { name: 'DeviceSensorService', class: window.DeviceSensorService, description: 'Motion sensor capture' },
+                { name: 'SecureCameraAPI', class: window.SecureCameraAPI, description: 'Enhanced camera security' },
+                { name: 'SecurityIntegrationTest', class: window.SecurityIntegrationTest, description: 'Test suite runner' }
+            ];
+            
+            const moduleContainer = document.getElementById('moduleStatus');
+            moduleContainer.innerHTML = '';
+            
+            let loadedCount = 0;
+            
+            modules.forEach(module => {
+                const moduleDiv = document.createElement('div');
+                moduleDiv.className = 'module';
+                
+                const available = module.class && typeof module.class === 'function';
+                
+                if (available) {
+                    moduleDiv.classList.add('loaded');
+                    loadedCount++;
+                    log(`✅ ${module.name} - Available`);
+                } else {
+                    moduleDiv.classList.add('failed');
+                    log(`❌ ${module.name} - Not Available`);
+                }
+                
+                moduleDiv.innerHTML = `
+                    <h4>${available ? '✅' : '❌'} ${module.name}</h4>
+                    <p>${module.description}</p>
+                    <small>Status: ${available ? 'Loaded' : 'Failed'}</small>
+                `;
+                
+                moduleContainer.appendChild(moduleDiv);
+            });
+            
+            const status = `${loadedCount}/${modules.length} modules loaded`;
+            log(`📊 Module check complete: ${status}`);
+            
+            if (loadedCount >= 4) {
+                updateStatus(`🟢 ${status} - Ready for testing`, 'ready');
+            } else {
+                updateStatus(`🟡 ${status} - Some modules missing`, 'error');
+            }
+        }
+        
+        async function runQuickTest() {
+            log('🚀 Starting quick security test...');
+            updateStatus('🔄 Running quick test...', 'running');
+            updateProgress(0);
+            
+            try {
+                testRunner = new SecurityIntegrationTest();
+                
+                // Quick module check
+                updateProgress(20);
+                await testRunner.initializeSecurityModules();
+                
+                updateProgress(50);
+                log('📦 Security modules initialized');
+                
+                // Test a few key modules
+                updateProgress(70);
+                await testRunner.testAntiTamperingService();
+                await testRunner.testBlockchainService();
+                
+                updateProgress(100);
+                log('✅ Quick test completed successfully');
+                updateStatus('🟢 Quick test passed', 'success');
+                
+            } catch (error) {
+                log(`❌ Quick test failed: ${error.message}`);
+                updateStatus('🔴 Quick test failed', 'error');
+            } finally {
+                setTimeout(() => updateProgress(0), 2000);
+            }
+        }
+        
+        async function runFullTest() {
+            log('🚀 Starting full security integration test...');
+            updateStatus('🔄 Running full integration test...', 'running');
+            updateProgress(0);
+            
+            const button = document.getElementById('fullTestBtn');
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            
+            try {
+                testRunner = new SecurityIntegrationTest();
+                
+                // Hook into test progress
+                const originalLog = console.log;
+                let testCount = 0;
+                const expectedTests = 50; // Approximate
+                
+                console.log = function(...args) {
+                    originalLog.apply(console, args);
+                    const message = args.join(' ');
+                    log(message);
+                    
+                    if (message.includes('✅') || message.includes('❌')) {
+                        testCount++;
+                        updateProgress((testCount / expectedTests) * 100);
+                    }
+                };
+                
+                // Run complete test suite
+                await testRunner.runCompleteSecurityTest();
+                
+                // Restore console.log
+                console.log = originalLog;
+                
+                updateProgress(100);
+                log('🎉 Full integration test completed!');
+                updateStatus('🟢 Full integration test completed', 'success');
+                
+                // Show summary
+                const results = testRunner.getTestResults();
+                const passed = results.filter(r => r.passed).length;
+                const total = results.length;
+                log(`📊 Final Results: ${passed}/${total} tests passed (${((passed/total)*100).toFixed(1)}%)`);
+                
+            } catch (error) {
+                log(`❌ Full test failed: ${error.message}`);
+                updateStatus('🔴 Full test failed', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Full Integration Test';
+                setTimeout(() => updateProgress(0), 3000);
+            }
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').textContent = 'VeriLens Security Integration Test Console\n═══════════════════════════════════════════════\n';
+            updateStatus('🟢 Ready to test', 'ready');
+            updateProgress(0);
+        }
+        
+        // Auto-check modules on load
+        setTimeout(checkModules, 2000);
+    </script>
+</body>
+</html>

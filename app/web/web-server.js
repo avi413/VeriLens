@@ -8,12 +8,12 @@ const {
   CryptoHashService,
   LocalBlockchainSigner,
   ExifMetadataExtractor,
-} = require('./dist/sdk');
+} = require('../../dist/sdk');
 
 const {
   extractMetadata,
-} = require('./dist/app/verification/metadataExtractor');
-const { encryptBuffer } = require('./dist/app/crypto/encryption');
+} = require('../../dist/app/verification/metadataExtractor');
+const { encryptBuffer } = require('../../dist/app/crypto/encryption');
 
 const app = express();
 const port = 3000;
@@ -35,7 +35,9 @@ const upload = multer({
 
 // Middleware
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(__dirname)); // Serve files from app/web directory
+app.use('/dist', express.static(path.join(__dirname, '../../dist')));
+app.use('/sdk', express.static(path.join(__dirname, '../../dist/sdk')));
 
 // Initialize SDK components
 const hashService = new CryptoHashService('sha256', 'hex');
@@ -44,14 +46,29 @@ const blockchainSigner = new LocalBlockchainSigner({
   signerId: 'web-server-001',
 });
 
-// Serve the web app
+// Serve the secure web app (NEW)
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'secure-web-app.html'));
+});
+
+// Serve the old web app for comparison
+app.get('/old', (req, res) => {
   res.sendFile(path.join(__dirname, 'web-app.html'));
 });
 
 // Serve the simple demo as alternative
 app.get('/demo', (req, res) => {
   res.sendFile(path.join(__dirname, 'web-demo.html'));
+});
+
+// Serve the investor demo
+app.get('/investor', (req, res) => {
+  res.sendFile(path.join(__dirname, 'investor-demo.html'));
+});
+
+// Serve the demo portal
+app.get('/portal', (req, res) => {
+  res.sendFile(path.join(__dirname, 'demo-portal.html'));
 });
 
 // Health check endpoint

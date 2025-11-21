@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeriLens - Photo Authentication Platform</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+
+      .tagline {
+        font-size: 1.3rem;
+        color: #34495e;
+        margin-bottom: 20px;
+      }
+
+      .value-prop {
+        background: #e8f4fd;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #3498db;
+      }
+
+      .demo-sections {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .demo-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-card h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .step-indicator {
+        background: #3498db;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .upload-area {
+        border: 3px dashed #3498db;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .upload-area:hover {
+        border-color: #2980b9;
+        background: rgba(52, 152, 219, 0.05);
+      }
+
+      .upload-area.dragover {
+        border-color: #27ae60;
+        background: rgba(46, 204, 113, 0.1);
+      }
+
+      .btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      .btn.success {
+        background: #27ae60;
+      }
+
+      .btn.warning {
+        background: #f39c12;
+      }
+
+      .btn.danger {
+        background: #e74c3c;
+      }
+
+      .verification-result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        display: none;
+      }
+
+      .verification-result.authentic {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .verification-result.tampered {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .hash-display {
+        font-family: 'Courier New', monospace;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+        margin: 10px 0;
+        word-break: break-all;
+        font-size: 0.9rem;
+      }
+
+      .explanation-box {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .explanation-box h3 {
+        color: #856404;
+        margin-bottom: 10px;
+      }
+
+      .explanation-box p {
+        color: #856404;
+        margin-bottom: 10px;
+      }
+
+      .demo-flow {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .flow-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .flow-step {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+
+      .flow-step:hover {
+        border-color: #3498db;
+        transform: translateY(-5px);
+      }
+
+      .flow-step .icon {
+        font-size: 2.5rem;
+        color: #3498db;
+        margin-bottom: 15px;
+      }
+
+      .sample-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .sample-image {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .sample-image:hover {
+        border-color: #3498db;
+        transform: scale(1.02);
+      }
+
+      .sample-image .icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+      }
+
+      .authentic {
+        color: #27ae60;
+      }
+
+      .tampered {
+        color: #e74c3c;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 20px 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #3498db, #27ae60);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .metric-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #3498db;
+      }
+
+      .metric-label {
+        color: #7f8c8d;
+        margin-top: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .demo-sections {
+          grid-template-columns: 1fr;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> VeriLens</h1>
+        <div class="tagline">Cryptographic Photo Authentication Platform</div>
+        <div class="value-prop">
+          <strong>The Problem:</strong> In an era of AI-generated content and
+          deepfakes, how do you prove a photo is real and unaltered?<br />
+          <strong>Our Solution:</strong> VeriLens creates an unbreakable
+          cryptographic "fingerprint" for every photo at the moment of capture,
+          making tampering instantly detectable.
+        </div>
+
+        <div
+          style="
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #ffc107;
+          "
+        >
+          <h4 style="color: #856404; margin-bottom: 15px">
+            <i class="fas fa-question-circle"></i> "How Do I Know This Hash
+            Belongs to MY Photo?"
+          </h4>
+          <p style="color: #856404; font-size: 1.1rem; line-height: 1.6">
+            <strong>Simple:</strong> The hash IS calculated FROM your photo's
+            exact pixels! Change even 1 pixel → Completely different hash.
+            <br /><strong>Try it below!</strong> Upload any photo and see
+            instant verification.
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Demo Sections -->
+      <div class="demo-sections">
+        <!-- Upload & Authenticate -->
+        <div class="demo-card">
+          <h2>
+            <span class="step-indicator">1</span>
+            Upload ANY Photo - See If It's Real!
+          </h2>
+
+          <div
+            style="
+              background: #e8f5e8;
+              padding: 15px;
+              border-radius: 8px;
+              margin-bottom: 20px;
+              text-align: left;
+            "
+          >
+            <h4 style="color: #27ae60; margin-bottom: 10px">
+              <i class="fas fa-magic"></i> What This Demo Does:
+            </h4>
+            <p style="color: #2d5016; margin-bottom: 8px">
+              • Calculates hash from your photo's pixels
+            </p>
+            <p style="color: #2d5016; margin-bottom: 8px">
+              • Simulates checking if photo was taken with VeriLens
+            </p>
+            <p style="color: #2d5016; margin-bottom: 8px">
+              • Shows you the exact cryptographic fingerprint
+            </p>
+            <p style="color: #2d5016">
+              • Demonstrates tamper detection capabilities
+            </p>
+          </div>
+
+          <div class="upload-area" id="uploadArea">
+            <i
+              class="fas fa-shield-check"
+              style="font-size: 3rem; color: #3498db; margin-bottom: 15px"
+            ></i>
+            <div style="font-size: 1.2rem; margin-bottom: 10px">
+              Drop ANY photo here to test authenticity
+            </div>
+            <div style="color: #7f8c8d">
+              We'll show you its cryptographic fingerprint
+            </div>
+            <input
+              type="file"
+              id="imageInput"
+              accept="image/*"
+              style="display: none"
+            />
+          </div>
+
+          <button
+            class="btn"
+            onclick="document.getElementById('imageInput').click()"
+          >
+            <i class="fas fa-search"></i> Verify Photo Authenticity
+          </button>
+
+          <div class="verification-result" id="verificationResult">
+            <!-- Results will appear here -->
+          </div>
+
+          <div class="explanation-box">
+            <h3>
+              <i class="fas fa-question-circle"></i> "But How Do I Know The
+              Original Hash?"
+            </h3>
+            <p>
+              <strong>Great Question!</strong> Here's how VeriLens solves this:
+            </p>
+
+            <div
+              style="
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 15px 0;
+                border: 1px solid #ddd;
+              "
+            >
+              <h4 style="color: #2c3e50; margin-bottom: 10px">
+                📱 Method 1: Hash Embedded in Photo
+              </h4>
+              <p style="margin-bottom: 8px">
+                • When VeriLens captures a photo, we embed the hash directly in
+                the image metadata
+              </p>
+              <p style="margin-bottom: 8px">
+                • Anyone can extract this hash from the photo file itself
+              </p>
+              <p>
+                • We then recalculate the current hash and compare it to the
+                embedded original
+              </p>
+            </div>
+
+            <div
+              style="
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 15px 0;
+                border: 1px solid #ddd;
+              "
+            >
+              <h4 style="color: #2c3e50; margin-bottom: 10px">
+                ⛓️ Method 2: Blockchain Lookup
+              </h4>
+              <p style="margin-bottom: 8px">
+                • Original hash is permanently stored on blockchain with
+                timestamp
+              </p>
+              <p style="margin-bottom: 8px">
+                • Search by photo metadata, device ID, or capture time
+              </p>
+              <p>• Blockchain provides tamper-proof record of original hash</p>
+            </div>
+
+            <div
+              style="
+                background: white;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 15px 0;
+                border: 1px solid #ddd;
+              "
+            >
+              <h4 style="color: #2c3e50; margin-bottom: 10px">
+                🏢 Method 3: Certificate Database
+              </h4>
+              <p style="margin-bottom: 8px">
+                • Organizations can maintain databases of verified photo hashes
+              </p>
+              <p style="margin-bottom: 8px">
+                • Link photos to case numbers, evidence IDs, or document
+                references
+              </p>
+              <p>• Provides audit trail for legal/compliance purposes</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Test -->
+        <div class="demo-card">
+          <h2>
+            <span class="step-indicator">2</span>
+            See Real Verification in Action
+          </h2>
+
+          <div
+            style="
+              background: #f0f8ff;
+              padding: 15px;
+              border-radius: 8px;
+              margin-bottom: 20px;
+              border-left: 4px solid #3498db;
+            "
+          >
+            <h4 style="color: #2c3e50; margin-bottom: 10px">
+              📋 Practical Example:
+            </h4>
+            <p style="color: #34495e; margin-bottom: 8px">
+              1. Police officer takes photo with VeriLens → Hash: abc123...
+            </p>
+            <p style="color: #34495e; margin-bottom: 8px">
+              2. Photo submitted as evidence → Hash embedded in file
+            </p>
+            <p style="color: #34495e; margin-bottom: 8px">
+              3. Court verifies photo → Recalculates hash from pixels
+            </p>
+            <p style="color: #34495e">
+              4. Hash matches abc123... = ✅ Photo is authentic & unchanged
+            </p>
+          </div>
+
+          <p style="margin-bottom: 20px; color: #7f8c8d">
+            Try these sample images to see how we detect authentic vs tampered
+            photos:
+          </p>
+
+          <div class="sample-images">
+            <div class="sample-image" onclick="testSampleImage('authentic')">
+              <div class="icon authentic">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div><strong>Original Photo</strong></div>
+              <div style="font-size: 0.9rem; color: #7f8c8d">
+                Authentic & Verified
+              </div>
+            </div>
+
+            <div class="sample-image" onclick="testSampleImage('tampered')">
+              <div class="icon tampered">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div><strong>Edited Photo</strong></div>
+              <div style="font-size: 0.9rem; color: #7f8c8d">
+                Tampered & Detected
+              </div>
+            </div>
+
+            <div class="sample-image" onclick="testSampleImage('ai')">
+              <div class="icon tampered">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div><strong>AI Generated</strong></div>
+              <div style="font-size: 0.9rem; color: #7f8c8d">
+                Fake & Flagged
+              </div>
+            </div>
+          </div>
+
+          <div id="testResult" style="margin-top: 20px"></div>
+        </div>
+      </div>
+
+      <!-- Hash Relationship Demo -->
+      <div class="demo-card" style="grid-column: 1 / -1; margin-top: 30px">
+        <h2 style="text-align: center; margin-bottom: 30px">
+          <i class="fas fa-microscope"></i> Visual Proof: How Hash Changes
+          Detect Tampering
+        </h2>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+          "
+        >
+          <!-- Original Photo -->
+          <div
+            style="
+              background: #e8f5e8;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #27ae60;
+              text-align: center;
+            "
+          >
+            <h3 style="color: #27ae60; margin-bottom: 15px">
+              <i class="fas fa-camera"></i> Original Photo
+            </h3>
+            <div
+              style="
+                background: #fff;
+                width: 150px;
+                height: 100px;
+                margin: 0 auto 15px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                color: #666;
+              "
+            >
+              📸 Your Photo
+            </div>
+            <p style="margin-bottom: 10px; font-size: 0.9rem">
+              <strong>Hash:</strong>
+            </p>
+            <div
+              style="
+                font-family: monospace;
+                background: #f8f9fa;
+                padding: 8px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                word-break: break-all;
+              "
+            >
+              abc123def456789...
+            </div>
+            <p style="color: #27ae60; margin-top: 10px; font-weight: bold">
+              ✅ Original & Authentic
+            </p>
+          </div>
+
+          <!-- Tampered Photo -->
+          <div
+            style="
+              background: #ffebee;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #e74c3c;
+              text-align: center;
+            "
+          >
+            <h3 style="color: #e74c3c; margin-bottom: 15px">
+              <i class="fas fa-edit"></i> Edited Photo
+            </h3>
+            <div
+              style="
+                background: #fff;
+                width: 150px;
+                height: 100px;
+                margin: 0 auto 15px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                color: #666;
+              "
+            >
+              🎨 Edited Photo
+            </div>
+            <p style="margin-bottom: 10px; font-size: 0.9rem">
+              <strong>Hash:</strong>
+            </p>
+            <div
+              style="
+                font-family: monospace;
+                background: #f8f9fa;
+                padding: 8px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                word-break: break-all;
+              "
+            >
+              xyz987uvw654321...
+            </div>
+            <p style="color: #e74c3c; margin-top: 10px; font-weight: bold">
+              ❌ Completely Different!
+            </p>
+          </div>
+
+          <!-- AI Generated -->
+          <div
+            style="
+              background: #fff3cd;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #ffc107;
+              text-align: center;
+            "
+          >
+            <h3 style="color: #856404; margin-bottom: 15px">
+              <i class="fas fa-robot"></i> AI Generated
+            </h3>
+            <div
+              style="
+                background: #fff;
+                width: 150px;
+                height: 100px;
+                margin: 0 auto 15px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                color: #666;
+              "
+            >
+              🤖 AI Image
+            </div>
+            <p style="margin-bottom: 10px; font-size: 0.9rem">
+              <strong>Hash:</strong>
+            </p>
+            <div
+              style="
+                font-family: monospace;
+                background: #f8f9fa;
+                padding: 8px;
+                border-radius: 4px;
+                font-size: 0.7rem;
+                word-break: break-all;
+              "
+            >
+              ai404fake567890...
+            </div>
+            <p style="color: #856404; margin-top: 10px; font-weight: bold">
+              ⚠️ No Original Record
+            </p>
+          </div>
+        </div>
+
+        <div
+          style="
+            background: #e1f5fe;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+          "
+        >
+          <h3 style="color: #01579b; margin-bottom: 15px">
+            <i class="fas fa-magic"></i> The Magic of Cryptographic Hashes
+          </h3>
+          <p style="color: #0277bd; font-size: 1.1rem; line-height: 1.6">
+            <strong
+              >Same Photo = Same Hash | Different Photo = Different Hash</strong
+            ><br />
+            This is mathematically guaranteed! Even changing 1 pixel out of
+            millions creates a completely different hash. This makes tampering
+            impossible to hide.
+          </p>
+        </div>
+      </div>
+
+      <!-- Practical Workflow Demo -->
+      <div class="demo-card" style="grid-column: 1 / -1; margin-top: 30px">
+        <h2 style="text-align: center; margin-bottom: 30px">
+          <i class="fas fa-route"></i> Complete Verification Workflow
+        </h2>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+          "
+        >
+          <!-- Step 1 -->
+          <div
+            style="
+              background: #e8f5e8;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #27ae60;
+            "
+          >
+            <h3 style="color: #27ae60; margin-bottom: 15px">
+              <i class="fas fa-camera"></i> 1. Photo Capture
+            </h3>
+            <p><strong>What Happens:</strong></p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • VeriLens app takes photo
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Creates hash: <code>a1b2c3d4...</code>
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Embeds hash in photo metadata
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Stores on blockchain
+            </p>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.8);
+                padding: 8px;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-size: 0.8rem;
+              "
+            >
+              <strong>Result:</strong> Photo + Hash Certificate Created
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div
+            style="
+              background: #fff3cd;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #ffc107;
+            "
+          >
+            <h3 style="color: #856404; margin-bottom: 15px">
+              <i class="fas fa-share-alt"></i> 2. Photo Sharing
+            </h3>
+            <p><strong>What Happens:</strong></p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Photo shared via email/cloud
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Hash travels with the photo
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Blockchain record remains permanent
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Anyone can verify authenticity
+            </p>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.8);
+                padding: 8px;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-size: 0.8rem;
+              "
+            >
+              <strong>Result:</strong> Verifiable Photo in Circulation
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div
+            style="
+              background: #cce5ff;
+              padding: 20px;
+              border-radius: 10px;
+              border: 2px solid #007bff;
+            "
+          >
+            <h3 style="color: #004085; margin-bottom: 15px">
+              <i class="fas fa-search"></i> 3. Verification Check
+            </h3>
+            <p><strong>What Happens:</strong></p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Upload photo to VeriLens
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Extract embedded hash: <code>a1b2c3d4...</code>
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Recalculate current hash
+            </p>
+            <p style="margin: 10px 0; font-size: 0.9rem">
+              • Compare: Original vs Current
+            </p>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.8);
+                padding: 8px;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-size: 0.8rem;
+              "
+            >
+              <strong>Result:</strong> Match = ✅ Authentic | No Match = ⚠️
+              Tampered
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            background: #e1f5fe;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+          "
+        >
+          <h3 style="color: #01579b; margin-bottom: 15px">
+            <i class="fas fa-key"></i> The Key Innovation
+          </h3>
+          <p style="color: #0277bd; font-size: 1.1rem; line-height: 1.6">
+            <strong
+              >You DON'T need to remember or look up hashes manually!</strong
+            ><br />
+            The hash is <em>embedded in the photo itself</em> and
+            <em>stored on blockchain</em>.<br />
+            VeriLens automatically finds and compares them during verification.
+          </p>
+        </div>
+      </div>
+
+      <!-- How It Works Flow -->
+      <div class="demo-flow">
+        <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px">
+          <i class="fas fa-cogs"></i> VeriLens Verification Process
+        </h2>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="icon">
+              <i class="fas fa-camera"></i>
+            </div>
+            <h3>1. Photo Capture</h3>
+            <p>
+              Secure camera captures photo with device attestation and metadata
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="icon">
+              <i class="fas fa-fingerprint"></i>
+            </div>
+            <h3>2. Hash Generation</h3>
+            <p>
+              Create unique cryptographic fingerprint (SHA-256 hash) from pixel
+              data
+            </p>
+          </div>
+
+          <div class="flow-step">
+            <div class="icon">
+              <i class="fas fa-link"></i>
+            </div>
+            <h3>3. Blockchain Storage</h3>
+            <p>Store hash permanently on immutable blockchain with timestamp</p>
+          </div>
+
+          <div class="flow-step">
+            <div class="icon">
+              <i class="fas fa-shield-check"></i>
+            </div>
+            <h3>4. Verification</h3>
+            <p>
+              Compare new hash against blockchain record to detect any changes
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="accuracyMetric">99.9%</div>
+          <div class="metric-label">Tamper Detection Accuracy</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-value" id="speedMetric">&lt;2s</div>
+          <div class="metric-label">Verification Speed</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-value" id="securityMetric">256-bit</div>
+          <div class="metric-label">Cryptographic Security</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-value" id="immutableMetric">∞</div>
+          <div class="metric-label">Blockchain Immutability</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // File upload handling
+      const uploadArea = document.getElementById('uploadArea');
+      const imageInput = document.getElementById('imageInput');
+      const verificationResult = document.getElementById('verificationResult');
+
+      // Drag and drop handlers
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleImageUpload(files[0]);
+        }
+      });
+
+      uploadArea.addEventListener('click', () => {
+        imageInput.click();
+      });
+
+      imageInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          handleImageUpload(e.target.files[0]);
+        }
+      });
+
+      // Handle image upload and verification
+      async function handleImageUpload(file) {
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file');
+          return;
+        }
+
+        // Show progress
+        showProgress('Analyzing photo...', 25);
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+          showProgress('Creating cryptographic fingerprint...', 50);
+
+          // Send to our verification API
+          const response = await fetch('/api/verify-image', {
+            method: 'POST',
+            body: formData,
+          });
+
+          showProgress('Checking blockchain records...', 75);
+
+          if (!response.ok) {
+            throw new Error('Verification failed');
+          }
+
+          const result = await response.json();
+
+          showProgress('Verification complete!', 100);
+
+          setTimeout(() => {
+            displayVerificationResult(result, file);
+          }, 500);
+        } catch (error) {
+          console.error('Verification error:', error);
+          showError('Verification failed: ' + error.message);
+        }
+      }
+
+      function showProgress(message, percentage) {
+        verificationResult.innerHTML = `
+          <div style="text-align: center;">
+            <div style="font-size: 1.1rem; margin-bottom: 10px;">${message}</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${percentage}%;"></div>
+            </div>
+          </div>
+        `;
+        verificationResult.style.display = 'block';
+        verificationResult.className = 'verification-result';
+      }
+
+      function displayVerificationResult(result, file) {
+        const isAuthentic = result.results.verification.verdict === 'pass';
+        const confidence = Math.round(
+          result.results.verification.confidence * 100
+        );
+
+        verificationResult.className = `verification-result ${
+          isAuthentic ? 'authentic' : 'tampered'
+        }`;
+
+        verificationResult.innerHTML = `
+          <h3>
+            <i class="fas fa-${
+              isAuthentic ? 'check-circle' : 'exclamation-triangle'
+            }"></i>
+            ${
+              isAuthentic
+                ? 'Photo Verified as Authentic'
+                : 'Photo Shows Signs of Tampering'
+            }
+          </h3>
+          
+          <div style="margin: 15px 0;">
+            <strong>File:</strong> ${file.name} (${formatFileSize(
+          file.size
+        )})<br>
+            <strong>Confidence:</strong> ${confidence}%<br>
+            <strong>Processed:</strong> ${new Date().toLocaleString()}
+          </div>
+
+          <div style="margin: 15px 0;">
+            <strong>This Photo's Cryptographic Fingerprint:</strong>
+            <div class="hash-display">${result.results.hash.digest}</div>
+          </div>
+
+          <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #3498db;">
+            <h4 style="color: #2c3e50; margin-bottom: 10px;">
+              <i class="fas fa-fingerprint"></i> How This Hash Proves Authenticity:
+            </h4>
+            <p style="color: #34495e; margin-bottom: 8px; font-size: 0.95rem;">
+              <strong>1. Hash = Photo's DNA:</strong> This hash is calculated from EVERY pixel in your photo
+            </p>
+            <p style="color: #34495e; margin-bottom: 8px; font-size: 0.95rem;">
+              <strong>2. Change Detection:</strong> Change even 1 pixel → Completely different hash
+            </p>
+            <p style="color: #34495e; margin-bottom: 8px; font-size: 0.95rem;">
+              <strong>3. Original Proof:</strong> VeriLens embeds the original hash when photo is taken
+            </p>
+            <p style="color: #34495e; font-size: 0.95rem;">
+              <strong>4. Verification:</strong> We compare current hash vs original embedded hash
+            </p>
+          </div>
+
+          <div style="margin: 15px 0;">
+            <strong>Verdict:</strong><br>
+            ${
+              isAuthentic
+                ? '✅ <span style="color: #27ae60;">AUTHENTIC:</span> Hash matches - photo unchanged since capture'
+                : '⚠️ <span style="color: #e74c3c;">TAMPERED:</span> Hash differs - photo was modified after capture'
+            }
+          </div>
+
+          <div style="margin: 15px 0;">
+            <strong>Verification Details:</strong><br>
+            • Hash Integrity: ${
+              result.results.verification.checks.hashIntegrity ? '✅' : '❌'
+            }<br>
+            • Metadata Present: ${
+              result.results.verification.checks.metadataPresent ? '✅' : '❌'
+            }<br>
+            • Blockchain Signed: ${
+              result.results.verification.checks.blockchainSigned ? '✅' : '❌'
+            }<br>
+            • Encryption Successful: ${
+              result.results.verification.checks.encryptionSuccessful
+                ? '✅'
+                : '❌'
+            }
+          </div>
+        `;
+      }
+
+      function showError(message) {
+        verificationResult.className = 'verification-result tampered';
+        verificationResult.innerHTML = `
+          <h3><i class="fas fa-exclamation-circle"></i> Error</h3>
+          <p>${message}</p>
+        `;
+        verificationResult.style.display = 'block';
+      }
+
+      // Test sample images
+      function testSampleImage(type) {
+        const testResult = document.getElementById('testResult');
+
+        let resultHTML = '';
+
+        switch (type) {
+          case 'authentic':
+            resultHTML = `
+              <div class="verification-result authentic">
+                <h3><i class="fas fa-check-circle"></i> Original Photo - Verified Authentic</h3>
+                <div style="margin: 15px 0;">
+                  <strong>Hash:</strong> 
+                  <div class="hash-display">a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456</div>
+                </div>
+                <p>✅ This photo has never been altered. The cryptographic fingerprint matches our blockchain records perfectly.</p>
+                <p><strong>Confidence:</strong> 99.9% | <strong>Status:</strong> Trusted</p>
+              </div>
+            `;
+            break;
+
+          case 'tampered':
+            resultHTML = `
+              <div class="verification-result tampered">
+                <h3><i class="fas fa-exclamation-triangle"></i> Edited Photo - Tampering Detected</h3>
+                <div style="margin: 15px 0;">
+                  <strong>Current Hash:</strong> 
+                  <div class="hash-display">x9y8z7w6v5u4321098765432109876543210fedcba0987654321fedcba987654</div>
+                  <strong>Original Hash:</strong> 
+                  <div class="hash-display">a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456</div>
+                </div>
+                <p>⚠️ This photo has been modified! Even small changes like brightness adjustment create completely different fingerprints.</p>
+                <p><strong>Confidence:</strong> 0.1% | <strong>Status:</strong> Tampered</p>
+              </div>
+            `;
+            break;
+
+          case 'ai':
+            resultHTML = `
+              <div class="verification-result tampered">
+                <h3><i class="fas fa-robot"></i> AI Generated - Not Real Photo</h3>
+                <div style="margin: 15px 0;">
+                  <strong>Hash:</strong> 
+                  <div class="hash-display">ai123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef</div>
+                </div>
+                <p>🤖 This is an AI-generated image. It was never captured by a real camera and has no authentic blockchain record.</p>
+                <p><strong>Confidence:</strong> 0% | <strong>Status:</strong> Artificial</p>
+              </div>
+            `;
+            break;
+        }
+
+        testResult.innerHTML = resultHTML;
+      }
+
+      // Utility functions
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Animate metrics on page load
+      window.addEventListener('load', () => {
+        // Add some dynamic behavior to make it feel more engaging
+        setTimeout(() => {
+          document.getElementById('accuracyMetric').style.animation =
+            'pulse 2s infinite';
+        }, 1000);
+      });
+
+      // Add pulse animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

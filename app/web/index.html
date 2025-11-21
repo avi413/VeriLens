@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeriLens - Choose Interface</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 40px;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .option {
+        padding: 30px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 15px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .option:hover {
+        border-color: #667eea;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .option-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+      }
+
+      .demo-icon {
+        color: #ff6b6b;
+      }
+
+      .app-icon {
+        color: #4ecdc4;
+      }
+
+      .option-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .option-description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      .features {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+      }
+
+      .features h3 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .feature-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .check {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .options {
+          grid-template-columns: 1fr;
+        }
+
+        .feature-list {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🛡️ VeriLens</h1>
+      <p class="subtitle">Secure Photo Authentication Platform</p>
+
+      <div class="options">
+        <a href="demo-dashboard.html" class="option">
+          <div class="option-icon demo-icon">📊</div>
+          <h3 class="option-title">Investor Demo</h3>
+          <p class="option-description">
+            Interactive dashboard with live metrics, real-time security
+            monitoring, and blockchain activity visualization
+          </p>
+        </a>
+
+        <a href="secure-web-app.html" class="option">
+          <div class="option-icon app-icon">📱</div>
+          <h3 class="option-title">Production App</h3>
+          <p class="option-description">
+            Full-featured secure photo capture and verification interface with
+            complete SDK integration
+          </p>
+        </a>
+      </div>
+
+      <div class="features">
+        <h3>🔐 Security Features</h3>
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Anti-tampering Protection
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Blockchain Verification
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Hardware Attestation
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Device Fingerprinting
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Secure Camera API
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Cryptographic Hashing
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Real-time Monitoring
+          </div>
+          <div class="feature-item">
+            <span class="check">✓</span>
+            Trust Score Analytics
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
