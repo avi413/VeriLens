@@ -54,16 +54,19 @@ function readConfigFile<T extends Record<string, any>>(name: string, required = 
   return JSON.parse(raw) as T;
 }
 
+function isPlainObject(value: unknown): value is Record<string, any> {
+  if (value === null || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return false;
+
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
 function deepMerge<T extends Record<string, any>>(base: T, override: Partial<T>): T {
   const output: Record<string, any> = { ...(base as Record<string, any>) };
 
   for (const [key, value] of Object.entries(override ?? {})) {
-    if (
-      value &&
-      typeof value === 'object' &&
-      !Array.isArray(value) &&
-      typeof output[key] === 'object'
-    ) {
+    if (isPlainObject(value) && isPlainObject(output[key])) {
       output[key] = deepMerge(output[key], value as Record<string, any>);
     } else if (value !== undefined) {
       output[key] = value;
