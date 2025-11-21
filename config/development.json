@@ -1,0 +1,9 @@
+{
+  "api": {
+    "baseUrl": "https://sandbox.api.verilens.io",
+    "requestTimeoutMs": 8000
+  },
+  "logging": {
+    "level": "debug"
+  }
+}

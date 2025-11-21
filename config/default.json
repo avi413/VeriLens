@@ -1,0 +1,23 @@
+{
+  "api": {
+    "baseUrl": "https://api.verilens.io",
+    "requestTimeoutMs": 6000,
+    "maxRetries": 3
+  },
+  "blockchain": {
+    "endpoint": "https://chain.verilens.io",
+    "signingTimeoutMs": 5000,
+    "maxRetries": 5
+  },
+  "encryption": {
+    "algorithm": "aes-256-gcm",
+    "keyEnvVar": "IMAGE_ENCRYPTION_KEY",
+    "ivLength": 12
+  },
+  "storage": {
+    "encryptedImageDir": "./data/images"
+  },
+  "logging": {
+    "level": "info"
+  }
+}
