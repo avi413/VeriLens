@@ -5,7 +5,7 @@
 
 export type HashAlgorithm = 'sha256' | 'sha512' | 'blake2b';
 
-export type HashEncoding = 'hex' | 'base64' | 'base58';
+export type HashEncoding = 'hex' | 'base64';
 
 export interface CaptureOptions {
   resolution?: `${number}x${number}`;

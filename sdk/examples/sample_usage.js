@@ -9,12 +9,13 @@ const {
   NodeFileImageCapture,
   ExifMetadataExtractor,
   LocalBlockchainSigner,
-} = require('..');
+} = require('../../dist/sdk');
 
 async function run() {
   const sdk = new VeriLensSdk({
     captureDriver: new NodeFileImageCapture({
-      defaultSourceUri: process.env.VERILENS_SAMPLE_IMAGE ?? './fixtures/sample.jpg',
+      defaultSourceUri:
+        process.env.VERILENS_SAMPLE_IMAGE ?? './fixtures/sample.jpg',
     }),
     metadataExtractors: [new ExifMetadataExtractor()],
     blockchainSigner: new LocalBlockchainSigner({
@@ -37,7 +38,9 @@ async function run() {
   });
 
   await sdk.initializeCapture({ camera: 'rear' });
-  const capture = await sdk.captureManager.captureImage({ resolution: '1080x1080' });
+  const capture = await sdk.captureManager.captureImage({
+    resolution: '1080x1080',
+  });
   const metadata = await sdk.metadataService.extractMetadata(capture);
   const hash = await sdk.hashService.hashPayload(capture.bytes ?? capture.uri);
 
@@ -45,10 +48,16 @@ async function run() {
   console.log('Hash digest:', hash);
 
   try {
-    const signed = await sdk.blockchainClient.signPayload(hash.digest, 'verilens-testnet');
+    const signed = await sdk.blockchainClient.signPayload(
+      hash.digest,
+      'verilens-testnet'
+    );
     console.log('Signature:', signed);
   } catch (error) {
-    console.warn('Signing skipped in placeholder implementation:', error.message);
+    console.warn(
+      'Signing skipped in placeholder implementation:',
+      error.message
+    );
   }
 
   const report = await sdk.runVerification({
