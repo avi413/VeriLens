@@ -10,9 +10,14 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "strict": true,
+    "declaration": true,
     "types": ["node", "jest"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@verilens/sdk": ["sdk/index.ts"],
+      "@verilens/sdk/*": ["sdk/*"]
+    }
   },
-  "include": ["app", "config", "tests", "docs"],
+  "include": ["app", "config", "tests", "docs", "sdk"],
   "exclude": ["dist", "node_modules"]
 }

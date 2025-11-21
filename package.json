@@ -2,6 +2,16 @@
   "name": "verilens-mvp",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    "./sdk": {
+      "types": "./dist/sdk/index.d.ts",
+      "default": "./dist/sdk/index.js"
+    },
+    "./sdk/*": {
+      "types": "./dist/sdk/*",
+      "default": "./dist/sdk/*"
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "ts-node --project tsconfig.json app/api/httpClient.ts",
